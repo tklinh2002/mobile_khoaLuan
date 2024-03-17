@@ -35,7 +35,6 @@ const FindJodScreen = ({ navigation }) => {
   return (
     <TouchableNativeFeedback onPress={Keyboard.dismiss} accessible={false}>
       <ScrollView style={styles.container}>
-        <Header navigation={navigation} />
         <Text style={{ fontSize: 30, fontWeight: "bold", marginLeft: 10 }}>
           Tìm công việc
         </Text>

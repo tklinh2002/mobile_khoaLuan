@@ -19,7 +19,6 @@ const JobScreen = ({navigation}) => {
 
   return (
     <View>
-      <Header navigation={navigation}/>
       <Text style={{ fontSize: 30, fontWeight: "bold", marginLeft: 10 }}>
         Dashboard
       </Text>

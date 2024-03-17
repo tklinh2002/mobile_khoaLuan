@@ -19,6 +19,9 @@ const RouteFreelancer = () => {
           fontSize: 16,
           fontWeight: 'bold',
         },
+        drawerStyle:{
+          marginTop: -40,
+        }
       }}
     >
       <Drawer.Screen

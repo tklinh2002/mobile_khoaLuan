@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import IconFeather from 'react-native-vector-icons/Feather';
 import TalentScreen from '../screens/clientsScreen/talentScreen';
 import PostScreen from '../screens/clientsScreen/postScreen';
 import JobScreen from '../screens/clientsScreen/jobScreen';
 import ContractScreen from '../screens/clientsScreen/contractScreen';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import ProfileScreen from '../screens/clientsScreen/profileScreen';
-
+import IconEntypo from 'react-native-vector-icons/Entypo';
+import IconFontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 const Drawer = createDrawerNavigator();
 
 const RouteClient = () => {
@@ -20,6 +21,9 @@ const RouteClient = () => {
           fontSize: 16,
           fontWeight: 'bold',
         },
+        drawerStyle:{
+          marginTop: -50
+        }
       }}
     >
       <Drawer.Screen
@@ -28,7 +32,7 @@ const RouteClient = () => {
         options={{
           drawerLabel: 'Cá nhân',
           drawerIcon: ({ color, size }) => (
-            <IconFeather name="users" color={color} size={size} />
+            <MaterialCommunityIcons name="account" color={color} size={30} />
           ),
           title: "",
           headerShown: false
@@ -40,7 +44,7 @@ const RouteClient = () => {
         options={{
           drawerLabel: 'Ứng viên',
           drawerIcon: ({ color, size }) => (
-            <IconFeather name="users" color={color} size={size} />
+            <IconEntypo name="users" color={color} size={30} />
           ),
           title: "",
           headerShown: false
@@ -52,7 +56,7 @@ const RouteClient = () => {
         options={{
           drawerLabel: 'Việc làm đã đăng',
           drawerIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="contacts" color={color} size={size} />
+            <IconEntypo name="newsletter" color={color} size={30} />
           ),
           title: "",
           headerShown: false
@@ -64,7 +68,7 @@ const RouteClient = () => {
         options={{
           drawerLabel: 'Việc làm',
           drawerIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account" color={color} size={size} />
+            <MaterialIcons name="note-add" color={color} size={30} />
           ),
           title: "",
           headerShown: false
@@ -76,7 +80,7 @@ const RouteClient = () => {
         options={{
           drawerLabel: 'Hợp đồng',
           drawerIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account" color={color} size={size} />
+            <IconFontAwesome5 name="file-contract" color={color} size={30} />
           ),
           title: "",
           headerShown: false

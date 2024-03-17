@@ -12,6 +12,7 @@ import IconEntypo from "react-native-vector-icons/Entypo";
 import { useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 import ModalCreateContract from "./modalCreateContract";
+import { Button } from "react-native-paper";
 const Contract = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const i = 3;
@@ -37,61 +38,82 @@ const Contract = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={{ flex: 1 }}>
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: "bold",
-            color: "green",
-            marginHorizontal: 10,
-          }}
-        >
-          Backend
-        </Text>
-        <View style={{ marginLeft: 10, marginTop: 10 }}>
+      <View style={{flexDirection:"row"}}>
+        <View style={{ flex: 1 }}>
           <Text
             style={{
-              fontSize: 16,
+              fontSize: 20,
               fontWeight: "bold",
-              color: "gray",
+              color: "green",
+              marginHorizontal: 10,
             }}
           >
-            Ngày tạo: 27/02/2024
+            Backend
           </Text>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            marginHorizontal: 10,
-            marginVertical: 10,
-          }}
-        >
-          <Image
-            source={require("../../../assets/avatar_temp.jpg")}
-            style={{ width: 50, height: 50, borderRadius: 25 }}
-          />
-          <Text style={{ marginHorizontal: 10, fontSize: 16 }}>
-            Nguyễn Văn a
-          </Text>
-        </View>
-        <Text style={{ fontSize: 16, fontWeight: "700", marginHorizontal: 10 }}>
-          2ETH
-        </Text>
-      </View>
-
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
-        <View style={[styles.button, { padding: 10, width: 160, }, {backgroundColor:status[i].color}]}>
-          <Text
-            style={{ fontSize: 16, fontWeight: "700", marginHorizontal: 10, color: "white" }}
+          <View style={{ marginLeft: 10, marginTop: 10 }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+                color: "gray",
+              }}
+            >
+              Ngày tạo: 27/02/2024
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              marginHorizontal: 10,
+              marginVertical: 10,
+            }}
           >
-            {status[i].text}
+            <Image
+              source={require("../../../assets/avatar_temp.jpg")}
+              style={{ width: 50, height: 50, borderRadius: 25 }}
+            />
+            <Text style={{ marginHorizontal: 10, fontSize: 16 }}>
+              Nguyễn Văn a
+            </Text>
+          </View>
+          <Text
+            style={{ fontSize: 16, fontWeight: "700", marginHorizontal: 10 }}
+          >
+            2ETH
           </Text>
         </View>
-      </View>
 
-      
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <View
+            style={[
+              styles.button,
+              { padding: 10, width: 160 },
+              { backgroundColor: status[i].color },
+            ]}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "700",
+                marginHorizontal: 10,
+                color: "white",
+              }}
+            >
+              {status[i].text}
+            </Text>
+          </View>
+        </View>
+      </View>
+      <TouchableOpacity>
+        <Button
+          mode="contained"
+          style={{ marginHorizontal: 10, marginVertical: 10, borderRadius: 10 }}
+        >
+          Xem chi tiết hợp đồng
+        </Button>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -103,7 +125,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginHorizontal: 10,
     marginVertical: 10,
-    flexDirection: "row",
   },
   button: {
     borderWidth: 1,

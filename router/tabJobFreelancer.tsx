@@ -12,9 +12,6 @@ const TabJobFreelancer = () => {
   const Tab = createMaterialTopTabNavigator();
   return (
     <Tab.Navigator initialRouteName="JobProgress"
-      screenOptions={{
-        tabBarStyle:{paddingTop: 40, marginBottom:10},
-      }}
     >
       <Tab.Screen name="JobProgress" component={JobProgress} options={{
         tabBarLabel: 'Đang làm',

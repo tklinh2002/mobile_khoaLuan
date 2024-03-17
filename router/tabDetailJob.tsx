@@ -12,11 +12,25 @@ const TabDetailJob = () => {
       <Tab.Screen
         name="DetailJob"
         component={DetailJob}
-        
+        options={{
+          tabBarLabel: "Chi tiết",
+        }}
       />
-      <Tab.Screen name="Hire" component={HireScreen} />
-      
-      <Tab.Screen name="Invite" component={InviteScreen} />
+      <Tab.Screen
+        name="Hire"
+        component={HireScreen}
+        options={{
+          tabBarLabel: "Ứng viên",
+        }}
+      />
+
+      <Tab.Screen
+        name="Invite"
+        component={InviteScreen}
+        options={{
+          tabBarLabel: "Danh sách mời",
+        }}
+      />
     </Tab.Navigator>
   );
 };

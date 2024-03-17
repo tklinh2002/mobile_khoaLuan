@@ -9,11 +9,13 @@ import {
 } from "react-native";
 import IconEntypo from "react-native-vector-icons/Entypo";
 import { useState } from "react";
+import ModalJob from "./modalJob";
+import ModalEditJob from "./modalEditJob";
 const Job = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  
+  const [modalVisible2, setModalVisible2] = useState(false);
   return (
-    <TouchableOpacity style={styles.container}>
+    <View style={styles.container}>
       <Text style={{ fontSize: 20, fontWeight: "bold", alignSelf: "center" }}>
         Backend
       </Text>
@@ -34,7 +36,7 @@ const Job = ({ navigation }) => {
         </Text>
       </View>
       <View style={{ flexDirection: "row" }}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={()=>setModalVisible2(true)}>
           <Text style={{ fontSize: 16, fontWeight: "bold", color: "green" }}>
             Chỉnh sửa bản nháp
           </Text>
@@ -46,7 +48,7 @@ const Job = ({ navigation }) => {
         </TouchableWithoutFeedback>
       </View>
 
-      {/* modal */}
+      {/* modal option*/}
       <Modal animationType="slide" visible={modalVisible} transparent={true}>
         <TouchableWithoutFeedback onPress={()=> setModalVisible(false)}>
           <View style={styles.modalContainer}>
@@ -64,7 +66,15 @@ const Job = ({ navigation }) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-    </TouchableOpacity>
+
+      {/* modal sửa bài đăng */}
+      <Modal
+      animationType="slide"
+      visible={modalVisible2}
+      >
+        <ModalEditJob setModalVisible={setModalVisible2}/>
+      </Modal>
+    </View>
   );
 };
 const styles = StyleSheet.create({

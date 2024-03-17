@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { DrawerActions, useNavigation } from '@react-navigation/native';
-const Header = ({ navigation }) => {
+const Header = () => {
   const nav = useNavigation();
   return (
     <View

@@ -1,7 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal } from "react-native";
 import { Button } from "react-native-paper";
+import ModalDetailJob from "../../component/modalDetailJob";
+import { useState } from "react";
 const JobInvite = () => {
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <View style={styles.container}>
       <View>
@@ -22,10 +25,10 @@ const JobInvite = () => {
         <Text style={styles.text}>Ngày mời: 20/07/2024</Text>
       </View>
       <View style={styles.containerButton}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=> setModalVisible(true)}>
           <Button
             mode="contained"
-            style={{ margin: 5, backgroundColor: "#1E65FF" }}
+            style={{ margin: 5, backgroundColor: "#E0970A" }}
           >
             Xem chi tiết
           </Button>
@@ -46,6 +49,16 @@ const JobInvite = () => {
             Từ chối
           </Button>
         </TouchableOpacity>
+        <Modal
+          animationType='slide'
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <ModalDetailJob setModalVisible={setModalVisible}/>
+        </Modal>
       </View>
     </View>
   );
@@ -58,7 +71,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 10,
     padding: 10,
-    backgroundColor: "#F08138",
+    backgroundColor: "#AE34DE",
   },
   text: {
     margin: 3,

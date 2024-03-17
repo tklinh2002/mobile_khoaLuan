@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity,Modal } from 'react-native';
 import { Button } from 'react-native-paper';
+import ModalDetailJob from '../../component/modalDetailJob';
+import { useState } from 'react';
 const JobApply = () => {
+  const [modalVisible, setModalVisible] = useState(false);
     return (
         <View style={styles.container}>
         <View>
@@ -20,7 +23,7 @@ const JobApply = () => {
           </View>
         </View>
         <View style={styles.containerButton}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=>setModalVisible(true)}>
             <Button
               mode="contained"
               style={{ margin: 5, backgroundColor: "#E0970A" }}
@@ -34,6 +37,16 @@ const JobApply = () => {
             </Button>
           </TouchableOpacity>
         </View>
+        <Modal
+          animationType='slide'
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <ModalDetailJob setModalVisible={setModalVisible}/>
+        </Modal>
       </View>
     );
 }

@@ -16,7 +16,6 @@ const TalentScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
-        <Header navigation={navigation} />
         <Text style={styles.title}>Tìm Ứng Viên</Text>
         <View style={styles.inputContainer}>
           <TextInput style={styles.input} placeholder="Nhập ....." />

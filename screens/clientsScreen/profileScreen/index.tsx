@@ -7,7 +7,6 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const ProfileScreen = ({ navigation }) => {
   return (
     <View>
-      <Header navigation={navigation} />
       <View style={styles.container}>
         <View style={{flexDirection:"row", justifyContent:"center", paddingHorizontal:10}}>
           <Text style={{ fontSize: 30, fontWeight: "bold", flex: 1 }}>Tài khoản</Text>
