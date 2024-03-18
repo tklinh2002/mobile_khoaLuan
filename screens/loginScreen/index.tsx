@@ -28,14 +28,6 @@ const LoginScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <View style={{ width: "95%", height: "12%", justifyContent: "center" }}>
-          <IconAntDesign
-            name="left"
-            size={25}
-            color="#0866FF"
-            onPress={() => navigation.goBack()}
-          />
-        </View>
         <View>
           <View style={{ alignItems: "center" }}>
             <Text style={styles.text}>FreelanceVN</Text>

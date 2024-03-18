@@ -30,7 +30,7 @@ const PostScreen = ({navigation}) => {
         }}
       >
         <Text style={{ fontSize: 25, fontWeight: "500", flex: 1 }}>
-          List job post
+          Danh sách công việc đã đăng
         </Text>
         <TouchableOpacity onPress={handCreateJob}>
           <View style={styles.button}>

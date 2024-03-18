@@ -1,8 +1,6 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
-import Header from "../../component/header";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
-import { Icon } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 const ProfileScreen = ({ navigation }) => {
   return (

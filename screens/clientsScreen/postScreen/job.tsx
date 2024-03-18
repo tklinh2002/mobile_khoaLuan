@@ -43,13 +43,13 @@ const Job = ({ navigation }) => {
           <Text style={styles.text}>
             0
           </Text>
-          <Text style={{fontSize:20}}>Proposals</Text>
+          <Text style={{fontSize:20}}>Ứng tuyển</Text>
         </View>
         <View>
           <Text style={styles.text}>
             0
           </Text>
-          <Text style={{fontSize:20}}>Hire</Text>
+          <Text style={{fontSize:20}}>Lời mời</Text>
         </View>
         <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
           <View style={styles.button2}>

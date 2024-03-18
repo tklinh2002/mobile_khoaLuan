@@ -5,7 +5,7 @@ const StartScreen = ({ navigation }) => {
     navigation.navigate("Login");
   };
 const handSignup = () => {
-    navigation.navigate("SignUp");
+    navigation.navigate("ChoiceRole");
 }
   return (
     <View style={styles.container}>
