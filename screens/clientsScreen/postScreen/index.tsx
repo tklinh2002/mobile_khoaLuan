@@ -19,18 +19,16 @@ const PostScreen = ({navigation}) => {
 
   return (
     <View>
-      <Text style={{ fontSize: 30, fontWeight: "bold", marginLeft: 10 }}>
-        Dashboard
-      </Text>
       <View
         style={{
           flexDirection: "row",
           marginHorizontal: 10,
           alignItems: "center",
+          marginTop: 10,
         }}
       >
         <Text style={{ fontSize: 25, fontWeight: "500", flex: 1 }}>
-          Danh sách công việc đã đăng
+          Danh sách job đăng
         </Text>
         <TouchableOpacity onPress={handCreateJob}>
           <View style={styles.button}>

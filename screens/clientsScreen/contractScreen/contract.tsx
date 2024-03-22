@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 import ModalCreateContract from "./modalCreateContract";
 import { Button } from "react-native-paper";
+import ModalDetailContract from "../../component/modalDetailContract";
 const Contract = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const i = 3;
@@ -106,7 +107,7 @@ const Contract = ({ navigation }) => {
           </View>
         </View>
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={()=>setModalVisible(true)}>
         <Button
           mode="contained"
           style={{ marginHorizontal: 10, marginVertical: 10, borderRadius: 10 }}
@@ -114,6 +115,12 @@ const Contract = ({ navigation }) => {
           Xem chi tiết hợp đồng
         </Button>
       </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        visible={modalVisible}
+      >
+        <ModalDetailContract setmodalvisiable={setModalVisible}/>
+      </Modal>
     </View>
   );
 };

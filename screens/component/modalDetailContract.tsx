@@ -10,46 +10,12 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from "react-native";
-import Job from "./job";
+
 import { useState } from "react";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
+import Job from "../clientsScreen/contractScreen/job";
 
-const ModalCreateContract = ({ navigation, setmodalvisiable }) => {
-  const [tasks, setTasks] = useState([]);
-
-  const handleDeleteTask = (index) => {
-    const newTasks = tasks.filter((_, i) => i !== index);
-    console.log(newTasks);
-    setTasks(newTasks);
-  };
-  const handAddTask = () => {
-    setTasks([...tasks, ""]);
-  };
-  const loadTasks = () => {
-    return tasks.map((task, index) => (
-      <View key={index} style={styles.task}>
-        <Text>Task {index + 1}:</Text>
-        <TextInput
-          style={styles.inputTask}
-          multiline={true}
-          numberOfLines={4}
-          placeholder="Nhập task"
-          value={task}
-          onChangeText={(text) => {
-            setTasks((prev) => {
-              const newTasks = [...prev];
-              newTasks[index] = text;
-              return newTasks;
-            });
-          }}
-        />
-        <TouchableOpacity onPress={() => handleDeleteTask(index)}>
-          <IconAntDesign name="minuscircle" size={25} color="red" />
-        </TouchableOpacity>
-      </View>
-    ));
-  };
-
+const ModalDetailContract = ({ setmodalvisiable }) => {
   return (
     <ScrollView>
       <TouchableNativeFeedback
@@ -57,8 +23,15 @@ const ModalCreateContract = ({ navigation, setmodalvisiable }) => {
         onPress={Keyboard.dismiss}
       >
         <View style={styles.content}>
-          <View style={{flexDirection:"row", alignItems:"center"}}>
-            <Text style={[styles.text, { flex:1, textAlign:"center", paddingLeft:30}]}>Tạo hợp đồng</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text
+              style={[
+                styles.text,
+                { flex: 1, textAlign: "center", paddingLeft: 30 },
+              ]}
+            >
+              Chi tiết hợp đồng
+            </Text>
             <IconAntDesign
               name="close"
               size={30}
@@ -71,30 +44,40 @@ const ModalCreateContract = ({ navigation, setmodalvisiable }) => {
             <Text style={styles.textInfo}>Tên: </Text>
             <Text style={styles.textInfo}>Email: </Text>
             <Text style={styles.textInfo}>Số điện thoại: </Text>
+            <Text style={styles.textInfo}>Địa chỉ ví: </Text>
+            <Text style={styles.textInfo}>Ngày ký: </Text>
           </View>
           <View style={styles.info}>
             <Text style={{ fontSize: 20 }}>Client</Text>
             <Text style={styles.textInfo}>Tên: </Text>
             <Text style={styles.textInfo}>Email: </Text>
             <Text style={styles.textInfo}>Số điện thoại: </Text>
+            <Text style={styles.textInfo}>Địa chỉ ví: </Text>
+            <Text style={styles.textInfo}>Ngày ký: </Text>
+          </View>
+          <View style={styles.info}>
+            <Text style={styles.textInfo}>Ngày tạo hợp đồng: </Text>
+            <Text style={styles.textInfo}>Ngày hết hạn: </Text>
           </View>
           <Job />
           <View style={styles.containerTask}>
-            <TouchableOpacity
-              style={[styles.button, { alignItems: "center" }]}
-              onPress={handAddTask}
-            >
-              <Text style={{ fontSize: 20, color: "green" }}>+ Thêm task</Text>
-            </TouchableOpacity>
-            {loadTasks()}
-          </View>
-          <View style={styles.containerButton}>
-            <TouchableOpacity style={[styles.button,{backgroundColor:"#0866FF"}]}>
-              <Text style={{ fontSize: 20, color: "white" }}>Tạo hợp đồng</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, {width:150, alignItems:"center", backgroundColor:"red"}]}>
-              <Text style={{ fontSize: 20, color: "white" }}>Hủy</Text>
-            </TouchableOpacity>
+            {/* danh sách task */}
+            <View style={styles.task}>
+              <Text>Task {1}:</Text>
+              <Text style={styles.inputTask}>Tạo giao diện</Text>
+            </View>
+            <View style={styles.task}>
+              <Text>Task {1}:</Text>
+              <Text style={styles.inputTask}>Tạo giao diện</Text>
+            </View>
+            <View style={styles.task}>
+              <Text>Task {1}:</Text>
+              <Text style={styles.inputTask}>Tạo giao diện</Text>
+            </View>
+            <View style={styles.task}>
+              <Text>Task {1}:</Text>
+              <Text style={styles.inputTask}>Tạo giao diện</Text>
+            </View>
           </View>
         </View>
       </TouchableNativeFeedback>
@@ -112,7 +95,6 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginHorizontal: 10,
     marginVertical: 10,
-    
   },
   text: {
     fontSize: 30,
@@ -168,4 +150,4 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 });
-export default ModalCreateContract;
+export default ModalDetailContract;

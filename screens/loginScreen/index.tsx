@@ -20,10 +20,15 @@ const LoginScreen = ({ navigation }) => {
   const handPassword = (password) => {
     setPassword(password);
   };
-  const handPressLogin = () => {
+  const handPressLogin = async() => {
     // Thực hiện quá trình đăng nhập ở đây và kiểm tra thành công
     // Nếu đăng nhập thành công
-    // navigation.navigate("Home");
+    navigation.navigate("HomeClient");
+    // const url = 'https://restcountries.com/v3.1/name/aruba?fullText=true'
+    // const response = await fetch(url,{
+    //   method: 'GET',
+    // }).then(response => response.json()).then(data => console.log(data)).catch(err => console.log(err))
+    
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -52,7 +57,7 @@ const LoginScreen = ({ navigation }) => {
                 onChangeText={handPassword}
               />
             </View>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={handPressLogin}>
               <Text style={{ fontSize: 20, color: "white" }}>Đăng nhập</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.button, {flexDirection:"row", backgroundColor:"green"}]}>

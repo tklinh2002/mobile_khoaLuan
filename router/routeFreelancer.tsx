@@ -4,8 +4,9 @@ import IconFeather from 'react-native-vector-icons/Feather';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import ProfileScreen from '../screens/freelancerScreen/profileScreen';
 import FindJodScreen from '../screens/freelancerScreen/findJobScreen';
-import ContractScreen from '../screens/freelancerScreen/contractScreen';
+import ContractScreen from '../screens/freelancerScreen/contractScreen/contractProgessScreen';
 import TabJobFreelancer from './tabJobFreelancer';
+import TabContractFreelancer from './tabContractFreelancer';
 
 const Drawer = createDrawerNavigator();
 
@@ -62,7 +63,7 @@ const RouteFreelancer = () => {
       />
       <Drawer.Screen
         name="Contract"
-        component={ContractScreen}
+        component={TabContractFreelancer}
         options={{
           drawerLabel: 'Hợp đồng',
           drawerIcon: ({ color, size }) => (

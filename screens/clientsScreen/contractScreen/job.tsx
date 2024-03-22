@@ -11,13 +11,11 @@ import IconEntypo from "react-native-vector-icons/Entypo";
 import { useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { TextInput } from "react-native-gesture-handler";
-const Job = ({ navigation }) => {
+import ModalDetailJob from "../../component/modalDetailJob";
+const Job = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const handDetailJob = () => {
-    navigation.navigate("TabDetailJob");
-  };
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={()=>setModalVisible(true)}>
       <Text
         style={{
           fontSize: 20,
@@ -42,6 +40,16 @@ const Job = ({ navigation }) => {
           Mô tả công việc
         </Text>
       </View>
+      <Modal
+          animationType='slide'
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <ModalDetailJob setModalVisible={setModalVisible}/>
+        </Modal>
     </TouchableOpacity>
   );
 };

@@ -1,11 +1,16 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
 import { Button } from "react-native-paper";
 import { useState } from "react";
-import ModalReportProgess from "../../component/modalReportProgess";
 import ModalDetailContract from "../../component/modalDetailContract";
-const JobProgress = () => {
-  const [modalVisibleProgess, setModalVisibleProgess] = useState(false);
+const ContractSign = () => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <View style={styles.container}>
@@ -17,32 +22,46 @@ const JobProgress = () => {
           />
           <Text style={styles.text}>Tên Client</Text>
         </View>
-        <Text style={styles.title}>Frontend</Text>
+        <Text style={styles.title} numberOfLines={5}>
+          Frontend
+        </Text>
         <View>
           <Text style={styles.text}>Ngân sách: 1000$</Text>
-          <Text style={styles.text}>Ngày hoàn thành: 20/07/2024</Text>
-          <Text style={styles.text}>Số task đã hoàn thành: 2/5</Text>
+          <Text style={styles.text}>Ngày tạo: 20/07/2024</Text>
+          <Text style={styles.text}>Hạn chót: 20/08/2024</Text>
+          <Text style={styles.text}>Trạng thái: Đang chờ</Text>
         </View>
       </View>
       <View style={styles.containerButton}>
-        <TouchableOpacity onPress={()=>setModalVisibleProgess(true)}>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Button
             mode="contained"
             style={{ margin: 5, backgroundColor: "#E0970A" }}
           >
-            Báo cáo task
+            Xem chi tiết
           </Button>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>setModalVisible(true)}>
-          <Button mode="contained" style={{ margin: 5 }}>
-            Xem hợp đồng
+        <TouchableOpacity>
+          <Button
+            mode="contained"
+            style={{ margin: 5, backgroundColor: "green" }}
+          >
+            Chấp nhận
+          </Button>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Button
+            mode="contained"
+            style={{ margin: 5, backgroundColor: "red" }}
+          >
+            Từ chối
           </Button>
         </TouchableOpacity>
       </View>
-      <Modal animationType="slide" visible={modalVisibleProgess}>
-        <ModalReportProgess setmodalvisiable={setModalVisibleProgess} typeUser={"client"} />
-      </Modal>
-      <Modal animationType="slide" visible={modalVisible}>
+      <Modal
+        animationType="slide"
+        visible={modalVisible}
+      >
         <ModalDetailContract setmodalvisiable={setModalVisible} />
       </Modal>
     </View>
@@ -56,8 +75,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 10,
     padding: 10,
-    backgroundColor: "green",
-
+    backgroundColor: "#AE34DE",
   },
   text: {
     margin: 3,
@@ -74,7 +92,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
-    margin: 10,
-  }
+  },
 });
-export default JobProgress;
+export default ContractSign;

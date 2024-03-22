@@ -10,7 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-native-date-picker";
 import { TextInput } from "react-native-paper";
 const SignUpScreen = ({ navigation }) => {
@@ -26,11 +26,14 @@ const SignUpScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date()); // Initial date
   const typeUser = "client";
+  
   return (
     <KeyboardAvoidingView>
       <ScrollView>
         <View>
-          <View style={{ paddingTop: 40, justifyContent: "center", marginLeft:10 }}>
+          <View
+            style={{ paddingTop: 40, justifyContent: "center", marginLeft: 10 }}
+          >
             <IconAntDesign
               name="left"
               size={25}
@@ -55,7 +58,7 @@ const SignUpScreen = ({ navigation }) => {
               keyboardType="email-address"
               mode="outlined"
               label="Email"
-              value={username}
+              value={email}
               onChangeText={(email) => setEmail(email)}
             />
             <View
@@ -127,9 +130,7 @@ const SignUpScreen = ({ navigation }) => {
               styles.button,
               { flexDirection: "row", backgroundColor: "green" },
             ]}
-            onPress={() => {
-              navigation.navigate("ConfirmOtp");
-            }}
+            // onPress={handPressRegister}
           >
             <Text style={{ fontSize: 20, color: "white" }}>
               Đăng ký tài khoản
