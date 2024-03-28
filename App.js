@@ -1,11 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer,CommonActions } from '@react-navigation/native';
-import Route from './router/router';
+import { NavigationContainer, CommonActions } from "@react-navigation/native";
+import Route from "./src/router/router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 export default function App() {
+  const queryClient = new QueryClient();
   return (
-    <NavigationContainer>
-      <Route />
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <Route />
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
-

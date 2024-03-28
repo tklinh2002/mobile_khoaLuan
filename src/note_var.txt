@@ -1,0 +1,6 @@
+infoLogin = {
+  token: data.data.access_token,
+  expires_in: data.data.expires_in,
+  user_type: data.data.user_type,
+  user: data.data.user,
+};
