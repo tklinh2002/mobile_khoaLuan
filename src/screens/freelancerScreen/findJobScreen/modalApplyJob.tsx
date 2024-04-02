@@ -11,41 +11,62 @@ import { Button, TextInput } from "react-native-paper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { applyJobApi } from "../../../apis/job.apiF";
 import { useState } from "react";
+import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system";
 const ModalApplyJob = ({ setModalVisible, job }) => {
   const [proposal, setProposal] = useState("");
-  const [linkCv, setLinkCv] = useState("");
-  const [cvUrl, setCvUrl] = useState<any>();
-
+  const [coverLetter, setcoverLetter] = useState("");
+  const [document, setDocument] = useState(null);
   const queryClient = useQueryClient();
+  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const token = infoLogin["access_token"];
+  // pick document
+  const pickDocument = async () => {
+    try {
+      let result = await DocumentPicker.getDocumentAsync({
+        type: "*/*",
+        copyToCacheDirectory: false,
+      });
+      if (!result.canceled) {
+        try {
+          const base64 = await FileSystem.readAsStringAsync(
+            result.assets[0].uri,
+            {
+              encoding: FileSystem.EncodingType.Base64,
+            }
+          );
+
+          setDocument({
+            name: result.assets[0].name,
+            base64: base64,
+          
+          });
+       
+        } catch (error) {
+          console.error("Error converting file to base64:", error);
+        }
+      }
+    } catch (error) {}
+  };
   const applyJob = useMutation({
-    mutationFn: async (_) => applyJobApi(job["id"], proposal, "linkcv"),
+    mutationFn: async (_) => applyJobApi(job["id"], proposal, coverLetter, document, token),
     onSuccess: () => {
       // queryClient.invalidateQueries("listJob");
       alert("Ứng tuyển thành công");
       setModalVisible(false);
     },
-    onError: () => {
+    onError: (error) => {
       alert("Ứng tuyển thất bại");
+      console.log(error.message);
+      console.log(error.name);
+      console.log(error.cause);
     }
   });
-  const handPickFile = async () => {
-    // try {
-    //   const res = await DocumentPicker.pick({
-    //     type: [DocumentPicker.types.allFiles],
-    //   });
-    //   console.log("File URI: ", res);
-    // } catch (err) {
-    //   if (DocumentPicker.isCancel(err)) {
-    //     console.log("User cancelled the file picking");
-    //   } else {
-    //     console.error("Error picking file: ", err);
-    //   }
-    // }
-  };
 
   const handApply = () => {
-    // applyJob.mutate();
-    console.log(job["id"], proposal, "linkcv");
+    console.log(token);
+    applyJob.mutate();
+    // console.log(job["id"], proposal, "linkcv");
     
   };
   return (
@@ -70,6 +91,8 @@ const ModalApplyJob = ({ setModalVisible, job }) => {
           label="Giới thiệu"
           mode="outlined"
           style={styles.textInput}
+          value={coverLetter}
+          onChangeText={(text) => setcoverLetter(text)}
         />
         <TextInput
           label="Số lượng proposal"
@@ -79,16 +102,11 @@ const ModalApplyJob = ({ setModalVisible, job }) => {
           value={proposal}
           onChangeText={(text) => setProposal(text)}
         />
-        <TextInput
-          label="Link CV"
-          mode="outlined"
-          style={styles.textInput}
-          value={linkCv}
-          onChangeText={(t) => setLinkCv(t)}
-        />
-        <TouchableOpacity onPress={handPickFile}>
+        
+        <TouchableOpacity onPress={pickDocument}>
           <Text style={styles.text}>Chọn file</Text>
         </TouchableOpacity>
+        <Text style={styles.text}>{document ? document.name : ""}</Text>
         <TouchableOpacity onPress={handApply}>
           <Button
             mode="contained"

@@ -24,16 +24,17 @@ const Talent = ({ navigation, talent }) => {
   };
   const [pickedData, setPickedData] = useState<PickerItem>();
   const user = {
-    fullname: talent.last_name+" "+talent.first_name,
-    avatar_url: talent.avatar_url||null,
-    position:talent.position
+    fullname: talent.last_name + " " + talent.first_name,
+    avatar_url: talent.avatar_url || null,
+    position: talent.position,
   };
-  
-  const data: Array<PickerItem> = [
-    
-  ];
-  const listpost= queryClient.getQueryData(["listpost"])
-  const listSkills= queryClient.getQueryData(["listSkills"])
+
+  const listpost = queryClient.getQueryData(["listpost"])["data"] as any[];
+  const data: PickerItem[] = listpost?.map((item) => ({
+    label: item.title,
+    value: item.id
+  }));
+  const listSkills = queryClient.getQueryData(["listSkills"]);
   return (
     <View style={styles.container}>
       <View style={styles.info}>
@@ -47,9 +48,7 @@ const Talent = ({ navigation, talent }) => {
         />
         <View>
           <Text style={{ fontSize: 20 }}>{user.fullname}</Text>
-          <Text style={{ fontSize: 20, color: "green" }}>
-            {user.position}
-          </Text>
+          <Text style={{ fontSize: 20, color: "green" }}>{user.position}</Text>
         </View>
       </View>
 

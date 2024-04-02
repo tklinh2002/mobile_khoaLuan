@@ -33,7 +33,7 @@ const TalentScreen = ({ navigation }) => {
       return res.data.data
     }),
   });
-  
+  if(listFreelancer.isLoading || listPost.isLoading) return <Text>Loading...</Text>
   return (
     <View style={styles.container}>
       <ScrollView>

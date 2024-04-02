@@ -7,6 +7,8 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   Image,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { useState } from "react";
@@ -22,7 +24,7 @@ const LoginScreen = ({ navigation }) => {
   const loginMutation = useMutation({
     mutationFn: () => loginAuth(username, password),
     onSuccess: (data) => {
-      console.log("Login success:", data.data.data);
+      console.log("Login success:", data.data.data.access_token);
       const infoLogin = data.data.data;
 
       queryClient.setDefaultOptions({
@@ -50,6 +52,15 @@ const LoginScreen = ({ navigation }) => {
   });
   const handPressLogin = () => {
     loginMutation.mutate();
+    if(loginMutation.isPending){
+      {<Modal 
+        visible={loginMutation.isPending}
+        transparent={true}
+        animationType="slide"
+        >
+        <ActivityIndicator size="large" color="#00ff00" />
+      </Modal>}
+    }
   };
 
   return (

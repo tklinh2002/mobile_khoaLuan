@@ -7,16 +7,35 @@ class Http {
     if (!Http.instance) {
       Http.instance = axios.create({
         baseURL: "https://timviecits.id.vn",
-        timeout: 10000,
-        headers: {
-          "Content-Type": "application/json",
-        },
+        timeout: 20000,
+        headers:{
+          "Content-Type":"multipart/form-data",
+        }
       });
     }
     return Http.instance;
   }
 }
 
-const http = Http.getInstance();
+const httpform = Http.getInstance();
 
-export default http;
+class Http2 {
+  private static instance: AxiosInstance;
+
+  static getInstance() {
+    if (!Http2.instance) {
+      Http2.instance = axios.create({
+        baseURL: "https://timviecits.id.vn",
+        timeout: 20000,
+        headers:{
+          "Content-Type":"application/json",
+        }
+      });
+    }
+    return Http2.instance;
+  }
+}
+
+const httpjson = Http2.getInstance();
+
+export default { httpform, httpjson};

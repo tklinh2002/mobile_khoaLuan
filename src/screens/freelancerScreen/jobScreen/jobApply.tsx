@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity,Modal } from 'react-nat
 import { Button } from 'react-native-paper';
 import ModalDetailJob from '../../component/modalDetailJob';
 import { useState } from 'react';
-const JobApply = () => {
+const JobApply = ({job}) => {
   const [modalVisible, setModalVisible] = useState(false);
     return (
         <View style={styles.container}>
@@ -45,7 +45,7 @@ const JobApply = () => {
             setModalVisible(!modalVisible);
           }}
         >
-          <ModalDetailJob setModalVisible={setModalVisible}/>
+          <ModalDetailJob setModalVisible={setModalVisible} job={job}/>
         </Modal>
       </View>
     );

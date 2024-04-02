@@ -16,27 +16,37 @@ import { useState } from "react";
 import ModalFind from "./modalFind";
 import Panigation from "../../component/pagination";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getListJobApiF } from "../../../apis/job.apiF";
+import { getListJobApiF, jobApllied } from "../../../apis/job.apiF";
 import Job from "./job";
 const PAGE_SIZE = 5;
 const length = 40; // total number of items
 const FindJodScreen = ({ navigation }) => {
-
-  const queryclient = useQueryClient();
+  const queryClient = useQueryClient();
+  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const token = infoLogin["access_token"];
   const [modalVisible, setModalVisible] = useState(false);
   const [page, setPage] = useState(1);
+  const jobApplied = useQuery({
+    queryKey: ["jobApplied"],
+    queryFn: async () => jobApllied(token).then((res) => {
+      queryClient.setQueryData(["jobApplied"], res.data.data.data);
+      return res.data.data;
+    }),
+  });
+
   const getListJob = useQuery({
     queryKey: ["jobs", page],
     queryFn: async () =>
-      getListJobApiF(page, 10, null, null, null, null, null).then((res) => res.data.data),
-
+       getListJobApiF(page, 10, null, null, null, null, null, token).then(
+        (res) => res.data.data
+      ),
   });
-  console.log(getListJob.data);
   return (
     <TouchableNativeFeedback onPress={Keyboard.dismiss} accessible={false}>
       <ScrollView style={styles.container}>
         <Text style={{ fontSize: 30, fontWeight: "bold", marginLeft: 10 }}>
           Tìm công việc
+          
         </Text>
         {/* tìm kiếm */}
         <View style={styles.inputContainer}>

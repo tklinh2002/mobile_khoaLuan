@@ -27,7 +27,9 @@ const ModalDetailJob = ({ setModalVisible , job}) => {
         <Text style={styles.text}>Thời hạn: {formatDate(job["deadline"])}</Text>
         <Text style={styles.text}>Kỹ năng</Text>
         <View style={styles.containerSkill}>
-          <Skill name="Java" />
+          {job?.Skills.map((skill) => {
+            return <Skill key={skill?.id} name={skill?.name} />;
+          })}
         </View>
       </ScrollView>
     </View>

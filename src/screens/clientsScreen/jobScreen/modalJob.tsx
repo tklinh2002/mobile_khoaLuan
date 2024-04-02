@@ -10,6 +10,8 @@ import {
   FlatList,
   Platform,
   KeyboardAvoidingView,
+  Image,
+  Button,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
@@ -22,10 +24,14 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import http from "../../../utils/http";
 import { createJobApi } from "../../../apis/job.api";
 import { getListSkill } from "../../../apis/auth.api";
+import * as ImagePicker from "expo-image-picker";
+import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system";
 const ModalJob = ({ setModalVisible }) => {
   const queryClient = useQueryClient();
   const infoLogin = queryClient.getQueryData(["infoLogin"]);
   const token = infoLogin["access_token"];
+  const formdata = new FormData();
   const initJob: Job = {
     title: "",
     thumbnail: "",
@@ -41,6 +47,68 @@ const ModalJob = ({ setModalVisible }) => {
     content_file: undefined,
   };
   const [job, setJob] = useState<Job>(initJob);
+  const [document, setDocument] = useState(null);
+
+  // pick document
+  const pickDocument = async () => {
+    try {
+      let result = await DocumentPicker.getDocumentAsync({
+        type: "*/*",
+        copyToCacheDirectory: false,
+      });
+      console.log(result);
+      if (!result.canceled) {
+        try {
+          const base64 = await FileSystem.readAsStringAsync(
+            result.assets[0].uri,
+            {
+              encoding: FileSystem.EncodingType.Base64,
+            }
+          );
+
+          setDocument(result.assets[0].name);
+          setJob((prevJob) => ({
+            ...prevJob,
+            content_file: {
+              name: result.assets[0].name,
+              type: result.assets[0].mimeType,
+              uri: result.assets[0].uri
+            },
+          }));
+        } catch (error) {
+          console.error("Error converting file to base64:", error);
+        }
+      }
+    } catch (error) {}
+  };
+  // pick image
+  const [image, setImage] = useState(null);
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      quality: 1,
+      base64: true,
+    });
+
+    if (!result.canceled) {
+      setImage({
+        base64: result.assets[0].base64,
+        width: result.assets[0].width,
+        height: result.assets[0].height,
+      });
+
+      setJob((prevJob) => ({
+        ...prevJob,
+        thumbnail: {
+          uri: result.assets[0].uri,
+          type: result.assets[0].mimeType,
+          name: result.assets[0].fileName,
+        },
+      }));
+    }
+  };
+
+  // search skill
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
@@ -85,22 +153,26 @@ const ModalJob = ({ setModalVisible }) => {
       setJob({ ...job, deadline: adjustedDate });
     }
   };
-  const handCloseModal = () => {
-    setModalVisible(false);
-  };
+
   const createJob = useMutation({
-    mutationFn: (job: Job) => createJobApi(job, token),
+    mutationFn: async (job: Job) => await createJobApi(job, token),
   });
-  const handCreateJob = () => {
-    createJob.mutate(job, {
-      onSuccess: () => {
-        alert("Tạo job thành công");
-      },
-      onError: (error) => {
-        alert("Tạo job thất bại");
-        console.log(error.message);
-      },
+  const handCreateJob = async () => {
+    // createJob.mutate(job, {
+    //   onSuccess: () => {
+    //     alert("Tạo job thành công");
+    //   },
+    //   onError: (error) => {
+    //     alert("Tạo job thất bại");
+    //     console.log(error.message);
+    //   },
+    // });
+    const rs = await createJobApi(job, token).then((res) => {
+      console.log(res);
+    }).catch((error) => {
+      console.log(error);
     });
+    // console.log(job);
   };
 
   return (
@@ -119,7 +191,7 @@ const ModalJob = ({ setModalVisible }) => {
                 name="closecircle"
                 size={24}
                 color="gray"
-                onPress={handCloseModal}
+                onPress={() => setModalVisible(false)}
               />
               <Text
                 style={{
@@ -196,82 +268,105 @@ const ModalJob = ({ setModalVisible }) => {
                 />
               </View>
             </View>
-            <View>
-              <Text style={styles.titleInput}>Tìm kỹ năng</Text>
-              <View style={styles.input}>
-                <TextInput
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChangeText={onChangeText}
-                />
-                {filteredSuggestions.length > 0 && searchQuery !== "" && (
-                  <ScrollView style={{ maxHeight: 200 }}>
-                    {filteredSuggestions.map((item) => (
-                      <TouchableOpacity
-                        style={styles.item}
-                        key={item.id}
-                        onPress={() => {
-                          const newSkill = [
-                            ...skill,
-                            { id: item.id, name: item.name },
-                          ];
-                          setSkill(newSkill);
-                          setFilteredSuggestions(
-                            filteredSuggestions.filter((i) => i.id !== item.id)
-                          );
-                          setJob((prevJob) => ({
-                            ...prevJob,
-                            skill: newSkill,
-                          }));
-                        }}
-                      >
-                        <Text style={styles.suggestionItem}>{item.name}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
+            {/* pick thumbnail */}
+            <View style={styles.containerInput}>
+              <Button title="Chọn thumbnail" onPress={pickImage} />
+              <View style={{ alignItems: "flex-start", marginVertical: 10 }}>
+                {image && (
+                  <Image
+                    source={{ uri: `data:image/jpeg;base64,${image.base64}` }}
+                    style={{ width: image.width / 3, height: image.height / 3 }}
+                  />
                 )}
               </View>
             </View>
+            {/* pick document */}
             <View style={styles.containerInput}>
-              <Text style={styles.titleInput}>Chọn kỹ năng</Text>
-              <View style={styles.containerSkill}>
-                {skill.map((item) => (
-                  <TouchableOpacity
-                    key={item.id}
-                    style={styles.skill}
-                    onPress={() => {
-                      const newSkills = skill.filter((i) => i.id !== item.id);
-                      setSkill(newSkills);
-                      setFilteredSuggestions([...filteredSuggestions, item]);
-                      setJob((prevJob) => ({ ...prevJob, skill: newSkills }));
-                    }}
-                  >
-                    <Text
-                      style={{ color: "white", fontSize: 18, marginRight: 5 }}
-                    >
-                      {item.name}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+              <Button title="Chọn file mô tả" onPress={pickDocument} />
+              {document && <Text>{document}</Text>}
             </View>
-            <View style={styles.containerButton}>
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: "red" }]}
-              >
-                <Text style={{ color: "white", fontSize: 20 }}>Hủy</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: "green" }]}
-                onPress={handCreateJob}
-              >
-                <Text style={{ color: "white", fontSize: 20 }}>Tạo job</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: "#0866FF" }]}
-              >
-                <Text style={{ color: "white", fontSize: 20 }}>Đăng job</Text>
-              </TouchableOpacity>
+            {/* search skill */}
+            <View>
+              <View>
+                <Text style={styles.titleInput}>Tìm kỹ năng</Text>
+                <View style={styles.input}>
+                  <TextInput
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChangeText={onChangeText}
+                  />
+                  {filteredSuggestions.length > 0 && searchQuery !== "" && (
+                    <ScrollView style={{ maxHeight: 200 }}>
+                      {filteredSuggestions.map((item) => (
+                        <TouchableOpacity
+                          style={styles.item}
+                          key={item.id}
+                          onPress={() => {
+                            const newSkill = [
+                              ...skill,
+                              { id: item.id, name: item.name, point:100 },
+                            ];
+                            setSkill(newSkill);
+                            setFilteredSuggestions(
+                              filteredSuggestions.filter(
+                                (i) => i.id !== item.id
+                              )
+                            );
+                            setJob((prevJob) => ({
+                              ...prevJob,
+                              skill: newSkill,
+                            }));
+                          }}
+                        >
+                          <Text style={styles.suggestionItem}>{item.name}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                  )}
+                </View>
+              </View>
+              <View style={styles.containerInput}>
+                <Text style={styles.titleInput}>Chọn kỹ năng</Text>
+                <View style={styles.containerSkill}>
+                  {skill.map((item) => (
+                    <TouchableOpacity
+                      key={item.id}
+                      style={styles.skill}
+                      onPress={() => {
+                        const newSkills = skill.filter((i) => i.id !== item.id);
+                        setSkill(newSkills);
+                        setFilteredSuggestions([...filteredSuggestions, item]);
+                        setJob((prevJob) => ({ ...prevJob, skill: newSkills }));
+                      }}
+                    >
+                      <Text
+                        style={{ color: "white", fontSize: 18, marginRight: 5 }}
+                      >
+                        {item.name}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+              {/* footer  */}
+              <View style={styles.containerButton}>
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: "red" }]}
+                >
+                  <Text style={{ color: "white", fontSize: 20 }}>Hủy</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: "green" }]}
+                  onPress={handCreateJob}
+                >
+                  <Text style={{ color: "white", fontSize: 20 }}>Tạo job</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: "#0866FF" }]}
+                >
+                  <Text style={{ color: "white", fontSize: 20 }}>Đăng job</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </TouchableWithoutFeedback>

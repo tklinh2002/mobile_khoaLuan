@@ -14,7 +14,7 @@ const Drawer = createDrawerNavigator();
 const RouteClient = () => {
   return (
     <Drawer.Navigator
-      initialRouteName="Talent"
+      initialRouteName="Post"
       screenOptions={{
         drawerActiveTintColor: '#e91e63',
         drawerLabelStyle: {

@@ -9,7 +9,7 @@ export const getListFreelancerApi = (
   expected_salary: string,
   token: string
 ) => {
-  return http.get("/api/v1/client/freelancers", {
+  return http.httpjson.get("/api/v1/client/freelancers", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
