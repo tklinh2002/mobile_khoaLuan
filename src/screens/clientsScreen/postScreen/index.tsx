@@ -31,7 +31,15 @@ const PostScreen = ({ navigation }) => {
       return res.data.data
     }),
   });
-  
+  const getListSkill1 = useQuery({
+    queryKey: ["listSkills"],
+    queryFn: async () =>
+      getListSkill(token).then((res) => {
+        queryClient.setQueryData(["listSkills"], res.data.data);
+        return res.data.data;
+      }),
+  });
+  if(listPost.isLoading || getListSkill1.isLoading) return (<Text>Loading...</Text>)
   return (
     <View>
       <View

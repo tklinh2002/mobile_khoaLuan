@@ -110,28 +110,18 @@ const ModalJob = ({ setModalVisible }) => {
 
   // search skill
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [skill, setSkill] = useState([]);
-  const getListSkill1 = useQuery({
-    queryKey: ["listSkills"],
-    queryFn: async () =>
-      getListSkill(token).then((res) => {
-        setSuggestions(res.data.data.data);
-        return res.data.data;
-      }),
-  });
-  const setFilter = (text) => {
-    const f1 = suggestions.filter((item) =>
+  
+
+  const onChangeTextSkill = (text) => {
+    setSearchQuery(text);
+    const listSkill = queryClient.getQueryData(["listSkills"]) as any;
+    const f1 = listSkill?.data.filter((item) =>
       item.name.toLowerCase().includes(text.toLowerCase())
     );
     const f2 = f1.filter((item) => !skill.some((i) => i.id === item.id));
-    return f2;
-  };
-
-  const onChangeText = (text) => {
-    setSearchQuery(text);
-    setFilteredSuggestions(setFilter(text));
+    setFilteredSuggestions(f2);
   };
 
   const adjustDateToTimezone = (date) => {
@@ -293,7 +283,7 @@ const ModalJob = ({ setModalVisible }) => {
                   <TextInput
                     placeholder="Search..."
                     value={searchQuery}
-                    onChangeText={onChangeText}
+                    onChangeText={onChangeTextSkill}
                   />
                   {filteredSuggestions.length > 0 && searchQuery !== "" && (
                     <ScrollView style={{ maxHeight: 200 }}>

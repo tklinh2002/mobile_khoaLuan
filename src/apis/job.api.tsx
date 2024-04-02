@@ -2,6 +2,7 @@ import { Job } from "../types/job";
 import http from "../utils/http";
 
 export const createJobApi = async (job: Job, token: string) => {
+  
   const formData = new FormData();
   formData.append("title", job.title);
   formData.append("desc", job.desc);
@@ -17,7 +18,19 @@ export const createJobApi = async (job: Job, token: string) => {
   formData.append("min_proposals", job.min_proposals.toString());
   formData.append("status", 1+"");
   // Append each skill as a separate field
-  formData.append("skill", JSON.stringify(job.skill));
+  const skills =[]
+  job.skill.forEach((skill) => {
+    skills.push({
+      skill_id: skill.id,
+      skill_name: skill.name,
+      point: skill.point,
+    })
+  });
+  console.log(skills);
+  skills.forEach((skill) => {
+    formData.append("skill[]", JSON.stringify(skill));
+  });
+  // formData.append("skill", JSON.stringify(skills));
   
   // const nameFile = `file_${new Date().getTime()}`;
   // // Append content_file if it exists
