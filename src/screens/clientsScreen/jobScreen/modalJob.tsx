@@ -58,13 +58,13 @@ const ModalJob = ({ setModalVisible }) => {
       });
       console.log(result);
       if (!result.canceled) {
-        try {
-          const base64 = await FileSystem.readAsStringAsync(
-            result.assets[0].uri,
-            {
-              encoding: FileSystem.EncodingType.Base64,
-            }
-          );
+        // try {
+        //   const base64 = await FileSystem.readAsStringAsync(
+        //     result.assets[0].uri,
+        //     {
+        //       encoding: FileSystem.EncodingType.Base64,
+        //     }
+        //   );
 
           setDocument(result.assets[0].name);
           setJob((prevJob) => ({
@@ -75,9 +75,9 @@ const ModalJob = ({ setModalVisible }) => {
               uri: result.assets[0].uri
             },
           }));
-        } catch (error) {
-          console.error("Error converting file to base64:", error);
-        }
+        // } catch (error) {
+        //   console.error("Error converting file to base64:", error);
+        // }
       }
     } catch (error) {}
   };
@@ -143,25 +143,20 @@ const ModalJob = ({ setModalVisible }) => {
       setJob({ ...job, deadline: adjustedDate });
     }
   };
-
-  const createJob = useMutation({
-    mutationFn: async (job: Job) => await createJobApi(job, token),
-  });
+const createJob = useMutation({
+  mutationFn: async (job: Job) => await createJobApi(job, token),
+  onSuccess: (data) => {
+    queryClient.invalidateQueries({ queryKey: ["listpostopen", 1] });
+    setModalVisible(false);
+    // console.log(data);
+  },
+  onError: (error) => {
+    console.log(error);
+  }
+})
+  
   const handCreateJob = async () => {
-    // createJob.mutate(job, {
-    //   onSuccess: () => {
-    //     alert("Tạo job thành công");
-    //   },
-    //   onError: (error) => {
-    //     alert("Tạo job thất bại");
-    //     console.log(error.message);
-    //   },
-    // });
-    const rs = await createJobApi(job, token).then((res) => {
-      console.log(res);
-    }).catch((error) => {
-      console.log(error);
-    });
+    createJob.mutate(job);  
     // console.log(job);
   };
 

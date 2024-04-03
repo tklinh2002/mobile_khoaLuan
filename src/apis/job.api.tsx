@@ -18,29 +18,36 @@ export const createJobApi = async (job: Job, token: string) => {
   formData.append("min_proposals", job.min_proposals.toString());
   formData.append("status", 1+"");
   // Append each skill as a separate field
-  const skills =[]
-  job.skill.forEach((skill) => {
-    skills.push({
-      skill_id: skill.id,
-      skill_name: skill.name,
-      point: skill.point,
-    })
-  });
-  console.log(skills);
-  skills.forEach((skill) => {
-    formData.append("skill[]", JSON.stringify(skill));
-  });
+  // const skills =[]
+  // job.skill.forEach((skill) => {
+  //   skills.push({
+  //     skill_id: skill.id+"",
+  //     skill_name: skill.name,
+  //     point: skill.point+"",
+  //   })
+  // });
+  const skills = job.skill.map((skill) => ({
+    skill_id: skill.id.toString(),
+    skill_name: skill.name,
+    point: skill.point.toString(),
+  }));
+
+  formData.append("skill", JSON.stringify(skills));
+  // console.log(skills);
+  // skills.forEach((skill) => {
+  //   formData.append("skill[]", JSON.stringify(skill));
+  // });
   // formData.append("skill", JSON.stringify(skills));
   
-  // const nameFile = `file_${new Date().getTime()}`;
-  // // Append content_file if it exists
-  // if (job.content_file) {
-  //   formData.append("content_file", job.content_file);
-  // }
-  // const imgFile = `img_${new Date().getTime()}`;
-  // if(job.thumbnail){
-  //   formData.append("thumbnail", job.thumbnail);
-  // }
+  const nameFile = `file_${new Date().getTime()}`;
+  // Append content_file if it exists
+  if (job.content_file) {
+    formData.append("content_file", job.content_file);
+  }
+  const imgFile = `img_${new Date().getTime()}`;
+  if(job.thumbnail){
+    formData.append("thumbnail", job.thumbnail);
+  }
   console.log(formData);
 
   return await http.httpform.post("/api/v1/client/job/create-job", formData,{

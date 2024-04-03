@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import Skill from "../../freelancerScreen/findJobScreen/skill";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "../../../utils/format";
@@ -24,6 +24,7 @@ const DetailJob = () => {
             <Skill key={skill.skill_id} name={skill.skill_name} />
         ))}
       </View>
+      <Image source={{ uri: job["thumbnail"] }} style={{width:200, height:200}} />
     </ScrollView>
   );
 };
