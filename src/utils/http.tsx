@@ -7,7 +7,7 @@ class Http {
     if (!Http.instance) {
       Http.instance = axios.create({
         baseURL: "https://timviecits.id.vn",
-        timeout: 20000,
+        timeout: 25000,
         headers:{
           "Content-Type":"multipart/form-data",
         }

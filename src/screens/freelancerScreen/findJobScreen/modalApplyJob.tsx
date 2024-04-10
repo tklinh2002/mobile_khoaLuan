@@ -4,6 +4,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import React from "react";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
@@ -14,7 +16,8 @@ import { useState } from "react";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 const ModalApplyJob = ({ setModalVisible, job }) => {
-  const [proposal, setProposal] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [proposal, setProposal] = useState("0");
   const [coverLetter, setcoverLetter] = useState("");
   const [document, setDocument] = useState(null);
   const queryClient = useQueryClient();
@@ -28,46 +31,43 @@ const ModalApplyJob = ({ setModalVisible, job }) => {
         copyToCacheDirectory: false,
       });
       if (!result.canceled) {
-        try {
-          const base64 = await FileSystem.readAsStringAsync(
-            result.assets[0].uri,
-            {
-              encoding: FileSystem.EncodingType.Base64,
-            }
-          );
-
-          setDocument({
-            name: result.assets[0].name,
-            base64: base64,
-          
-          });
-       
-        } catch (error) {
-          console.error("Error converting file to base64:", error);
-        }
+        setDocument({
+          name: result.assets[0].name,
+          uri: result.assets[0].uri,
+          type: result.assets[0].mimeType,
+        });
       }
     } catch (error) {}
   };
-  const applyJob = useMutation({
-    mutationFn: async (_) => applyJobApi(job["id"], proposal, coverLetter, document, token),
-    onSuccess: () => {
-      // queryClient.invalidateQueries("listJob");
+  // const applyJob = useMutation({
+  //   mutationFn: () =>
+  //     applyJobApi(job["id"], proposal, coverLetter, document, token),
+  //   onSuccess: () => {
+  //     alert("Ứng tuyển thành công");
+  //     setModalVisible(false);
+  //   },
+  //   onError: (error) => {
+  //     Alert.alert("Lỗi", error["response"].data.message);
+  //     console.log(error);
+  //   },
+  // });
+
+  const handApply = async () => {
+    setIsLoading(true);
+    // applyJob.mutate();
+    const rs = await applyJobApi(
+      job["id"],
+      proposal,
+      coverLetter,
+      document,
+      token
+    ).then((res) => {
+      setIsLoading(false);
       alert("Ứng tuyển thành công");
       setModalVisible(false);
-    },
-    onError: (error) => {
-      alert("Ứng tuyển thất bại");
-      console.log(error.message);
-      console.log(error.name);
-      console.log(error.cause);
-    }
-  });
-
-  const handApply = () => {
-    console.log(token);
-    applyJob.mutate();
-    // console.log(job["id"], proposal, "linkcv");
-    
+    }).catch((error) => {
+      Alert.alert("Lỗi", error["response"].data.message);
+    });
   };
   return (
     <View style={styles.container}>
@@ -102,20 +102,29 @@ const ModalApplyJob = ({ setModalVisible, job }) => {
           value={proposal}
           onChangeText={(text) => setProposal(text)}
         />
-        
+
         <TouchableOpacity onPress={pickDocument}>
-          <Text style={styles.text}>Chọn file</Text>
+          <Text style={[styles.text, { fontStyle: "italic", color: "blue" }]}>
+            Chọn file CV
+          </Text>
         </TouchableOpacity>
-        <Text style={styles.text}>{document ? document.name : ""}</Text>
-        <TouchableOpacity onPress={handApply}>
-          <Button
-            mode="contained"
-            style={[styles.button, { backgroundColor: "green" }]}
-          >
-            Ứng tuyển
-          </Button>
-        </TouchableOpacity>
-        <TouchableOpacity>
+        {document && (
+          <Text style={[styles.text, { color: "green" }]}>{document.name}</Text>
+        )}
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <TouchableOpacity onPress={handApply}>
+            <Button
+              mode="contained"
+              style={[styles.button, { backgroundColor: "green" }]}
+            >
+              Ứng tuyển
+            </Button>
+          </TouchableOpacity>
+        )}
+
+        <TouchableOpacity onPress={() => setModalVisible(false)}>
           <Button
             mode="contained"
             style={[styles.button, { backgroundColor: "red" }]}

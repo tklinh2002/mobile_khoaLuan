@@ -14,7 +14,7 @@ const Drawer = createDrawerNavigator();
 const RouteClient = () => {
   return (
     <Drawer.Navigator
-      initialRouteName="Post"
+      initialRouteName="Talent"
       screenOptions={{
         drawerActiveTintColor: '#e91e63',
         drawerLabelStyle: {
@@ -29,6 +29,7 @@ const RouteClient = () => {
       <Drawer.Screen
         name="Profile"
         component={ProfileScreen}
+
         options={{
           drawerLabel: 'Cá nhân',
           drawerIcon: ({ color, size }) => (

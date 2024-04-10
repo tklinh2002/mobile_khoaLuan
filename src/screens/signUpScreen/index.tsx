@@ -17,6 +17,7 @@ import { TextInput } from "react-native-paper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { registerAuth } from "../../apis/auth.api";
 import { User } from "../../types/user";
+import ModalLoading from "../component/modalLoading";
 const SignUpScreen = ({ navigation }) => {
   const queryClient = useQueryClient();
   const user_register: User = queryClient.getQueryData(["user_register"]);
@@ -43,7 +44,7 @@ const SignUpScreen = ({ navigation }) => {
       );
     },
     onError: (error) => {
-      console.log(error);
+      Alert.alert("Đăng ký thất bại", error["response"].data.message);
     },
     
   });
@@ -190,6 +191,7 @@ const SignUpScreen = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
+      <ModalLoading visible={register.isPending} />
     </KeyboardAvoidingView>
   );
 };

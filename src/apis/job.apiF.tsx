@@ -6,9 +6,6 @@ export const getListJobApiF = (
   num,
   skills,
   keyword,
-  bids,
-  proposal,
-  deadline,
   token
 ) => {
   return http.httpjson.get("/api/v1/freelancer/job", {
@@ -20,9 +17,7 @@ export const getListJobApiF = (
       num: num,
       skills: skills,
       keyword: keyword,
-      bids: bids,
-      proposal: proposal,
-      deadline: deadline,
+      status: 1
     },
   });
 };
@@ -32,21 +27,20 @@ export const applyJobApi = (job_id, proposal, coverLetter, file, token) => {
   formdata.append("jobId", job_id);
   formdata.append("proposal", proposal);
   formdata.append("coverLetter", coverLetter);
-  formdata.append("attachments", file, `file_${new Date().getTime()}`);
+  formdata.append("attachments", file);
   console.log(formdata);
-  return http.httpform.post(`/api/v1/freelancer/job/apply`, {
+  return http.httpform.post(`/api/v1/freelancer/job/apply`,formdata, {
     headers: {
       Authorization: `Bearer ${token}`,
-      contentType: "multipart/form-data",
     },
-    data: formdata,
   });
 };
 
-export const jobApllied = (token: string) => {
+export const jobAplliedAPI = (token: string) => {
   return http.httpjson.get(`/api/v1/freelancer/job/applied`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    
   });
 }

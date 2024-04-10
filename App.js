@@ -11,8 +11,8 @@ export default function App() {
         <Route />
       </NavigationContainer>
     </QueryClientProvider>
-    // <View>
+    // <QueryClientProvider client={queryClient}>
     //   <TestScreen />
-    // </View>
+    // </QueryClientProvider>
   );
 }

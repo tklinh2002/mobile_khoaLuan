@@ -31,8 +31,8 @@ const Job = ({ job }) => {
           Ngày hết hạn: {formatDate(job["deadline"])}
         </Text>
       </View>
-      {jobApllied?.includes(job["id"]) ? (
-        <Button mode="contained" style={{ marginVertical: 10 }}>
+      {jobApllied.some((item) => item.job_id == job["id"]) ? (
+        <Button mode="contained" style={{ marginVertical: 10, backgroundColor:"#A1A1A1" }}>
           Đã ứng tuyển
         </Button>
       ) : (

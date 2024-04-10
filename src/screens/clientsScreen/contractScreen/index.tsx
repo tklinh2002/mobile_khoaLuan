@@ -9,7 +9,7 @@ import {
 import Header from "../../component/header";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import Contract from "./contract";
-import ModalJob from "../jobScreen/modalJob";
+import ModalJob from "../postScreen/modalJob";
 import React, { useState } from "react";
 import ModalCreateContract from "./modalCreateContract";
 const ContractScreen = ({navigation}) => {

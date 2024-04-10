@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import IconEntypo from "react-native-vector-icons/Entypo";
 import Talent from "./talent";
@@ -15,7 +16,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Panigation from "../../component/pagination";
 import { useState } from "react";
 import { getListFreelancerApi } from "../../../apis/info.api";
-import { getListPostApi } from "../../../apis/job.api";
+import { getListMyPostApi } from "../../../apis/job.api";
 const TalentScreen = ({ navigation }) => {
   const [page, setpage] = useState(1);
   const queryClient = useQueryClient();
@@ -24,16 +25,18 @@ const TalentScreen = ({ navigation }) => {
   const listFreelancer = useQuery({
     queryKey: ["listFreelancer", page],
     queryFn: async () =>
-      getListFreelancerApi(page, 10, "", "", "",token).then((res) => res.data.data),
+      getListFreelancerApi(page, 10, "", "", "", token).then(
+        (res) => res.data.data
+      ),
   });
   const listPost = useQuery({
     queryKey: ["listpost"],
-    queryFn: async (_) => getListPostApi(page, 100, 1, token).then((res) => {
-      queryClient.setQueryData(["listpost"], res.data.data)
-      return res.data.data
-    }),
-  });
-  if(listFreelancer.isLoading || listPost.isLoading) return <Text>Loading...</Text>
+    queryFn: async (_) =>
+      getListMyPostApi(page, 100, 1, token).then((res) => {
+        queryClient.setQueryData(["listpost"], res.data.data);
+        return res.data.data;
+      }),
+  }); 
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -44,12 +47,25 @@ const TalentScreen = ({ navigation }) => {
             <IconEntypo name="magnifying-glass" size={30} color="white" />
           </TouchableOpacity>
         </View>
-
-        {listFreelancer.data?.data.map((item) => (
-          <Talent key={item["username"]} navigation={navigation} talent={item} />
-        ))}
+        {/* listFreelancer */}
+        {listFreelancer.isLoading || listPost.isLoading ? (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : (
+          // Render data if none is loading 
+          listFreelancer.data?.data.map((item) => (
+            <Talent
+              key={item["username"]}
+              navigation={navigation}
+              talent={item}
+            />
+          ))
+        )}
+      <Panigation setpage={setpage} length={listPost?.data?.total} />
       </ScrollView>
-      <Panigation setpage={setpage} length={10} />
     </View>
   );
 };

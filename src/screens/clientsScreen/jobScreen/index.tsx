@@ -9,7 +9,7 @@ import {
 import Header from "../../component/header";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import Job from "./job";
-import ModalJob from "./modalJob";
+import ModalJob from "../postScreen/modalJob";
 import React, { useState } from "react";
 const JobScreen = ({navigation}) => {
     const [modalVisible, setModalVisible] = useState(false);

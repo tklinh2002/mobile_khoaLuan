@@ -19,7 +19,6 @@ const TabDetailJob = () => {
     queryFn: async () => {
       return await getJobApi(id, token).then((res) => {
         queryClient.setQueryData(["job", id], res.data.data.data);
-        console.log(res.data.data);
         return res.data.data;
       });
     },

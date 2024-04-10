@@ -9,6 +9,7 @@ import {
   Image,
   Modal,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { useState } from "react";
@@ -21,17 +22,17 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const queryClient = useQueryClient();
 
+  // button login
   const loginMutation = useMutation({
     mutationFn: () => loginAuth(username, password),
     onSuccess: (data) => {
       console.log("Login success:", data.data.data.access_token);
       const infoLogin = data.data.data;
-
       queryClient.setDefaultOptions({
-        queries:{
+        queries: {
           staleTime: infoLogin.expires_in,
-        }
-      })
+        },
+      });
       queryClient.setQueryData(["infoLogin"], infoLogin);
       if (infoLogin.user_type === "client") {
         navigation.reset({
@@ -46,21 +47,11 @@ const LoginScreen = ({ navigation }) => {
       }
     },
     onError: (error) => {
-      console.error("Error during login:", error);
-      alert("Đã xảy ra lỗi trong quá trình đăng nhập");
+      Alert.alert("Đăng nhập thất bại", error["response"].data.message);
     },
   });
-  const handPressLogin = () => {
+  const handPressLogin = async () => {
     loginMutation.mutate();
-    if(loginMutation.isPending){
-      {<Modal 
-        visible={loginMutation.isPending}
-        transparent={true}
-        animationType="slide"
-        >
-        <ActivityIndicator size="large" color="#00ff00" />
-      </Modal>}
-    }
   };
 
   return (
@@ -84,9 +75,15 @@ const LoginScreen = ({ navigation }) => {
           secureTextEntry={true}
           onChangeText={(text) => setPassword(text)}
         />
-        <TouchableOpacity style={styles.button} onPress={handPressLogin}>
-          <Text style={{ fontSize: 20, color: "white" }}>Đăng nhập</Text>
-        </TouchableOpacity>
+
+        {loginMutation.isPending ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <TouchableOpacity style={styles.button} onPress={handPressLogin}>
+            <Text style={{ fontSize: 20, color: "white" }}>Đăng nhập</Text>
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity
           style={[
             styles.button,

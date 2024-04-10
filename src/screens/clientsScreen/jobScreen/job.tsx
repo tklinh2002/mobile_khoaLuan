@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import IconEntypo from "react-native-vector-icons/Entypo";
 import { useState } from "react";
-import ModalJob from "./modalJob";
-import ModalEditJob from "./modalEditJob";
+import ModalJob from "../postScreen/modalJob";
+import ModalEditJob from "../postScreen/modalEditJob";
 const Job = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
@@ -72,7 +72,7 @@ const Job = ({ navigation }) => {
       animationType="slide"
       visible={modalVisible2}
       >
-        <ModalEditJob setModalVisible={setModalVisible2}/>
+        <ModalEditJob setModalVisible={setModalVisible2} job_id={12}/>
       </Modal>
     </View>
   );

@@ -1,9 +1,25 @@
 import { useState } from "react";
-import { Button, Image, View, StyleSheet } from "react-native";
+import { Button, Image, View, StyleSheet, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import * as DocumentPicker from "expo-document-picker";
+import { useQuery } from "@tanstack/react-query";
+import { jobAplliedAPI } from "./apis/job.apiF";
 export default function TestScreen() {
+
+  // const jobApplied = useQuery({
+  //   queryKey: ["jobApplied", 1],
+  //   queryFn: async () =>
+  //     jobAplliedAPI(token,1).then((res) => {
+  //       console.log(res.data.data);
+  //       return res.data.data;
+  //     }).catch((err) => console.log(err)),
+  // });
+  // if(jobApplied.isLoading){
+  //   return <Text>Loading...</Text>
+  // }else{
+  //   console.log(jobApplied.data);
+  // }
   const [document, setDocument] = useState(null);
   const pickDocument = async () => {
     try {

@@ -7,96 +7,123 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  FlatList,
   Platform,
   KeyboardAvoidingView,
   Image,
   Button,
+  ActivityIndicator,
+  ScrollView,
+  Linking,
+  Alert,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { useState } from "react";
-import DatePicker from "react-native-woodpicker/dist/components/DatePicker";
-import Skill from "./skill";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Job } from "../../../types/job";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import http from "../../../utils/http";
-import { createJobApi } from "../../../apis/job.api";
-import { getListSkill } from "../../../apis/auth.api";
+import { editJobApi } from "../../../apis/job.api";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
-import * as FileSystem from "expo-file-system";
-const ModalJob = ({ setModalVisible }) => {
-  const queryClient = useQueryClient();
-  const infoLogin = queryClient.getQueryData(["infoLogin"]);
-  const token = infoLogin["access_token"];
-  const formdata = new FormData();
+import IconFontAwesome from "react-native-vector-icons/FontAwesome";
+import { Dropdown } from "react-native-element-dropdown";
+import type { PickerItem } from "react-native-woodpicker";
+
+const ModalEditJob = ({ setModalVisible, job_id }) => {
   const initJob: Job = {
+    id: "",
+    client_id: "",
     title: "",
-    thumbnail: "",
+    thumbnail: undefined,
     desc: "",
     content: "",
     bids: 0,
     deadline: new Date(),
     skill: [],
-    status: 0,
-    id: "",
-    client_id: "",
     min_proposals: 0,
     content_file: undefined,
+    status: 0,
   };
   const [job, setJob] = useState<Job>(initJob);
+
+  // search skill
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [skill, setSkill] = useState([]);
+  const [isEdit, setIsEdit] = useState(false);
+  const queryClient = useQueryClient();
+  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const token = infoLogin["access_token"];
+  // status post
+  const [pickedData, setPickedData] = useState<PickerItem>();
+  const data: PickerItem[] = [
+    {
+      label: "Ẩn",
+      value: 0,
+    },
+    {
+      label: "Mở ứng tuyển",
+      value: 1,
+    },
+    {
+      label: "Đóng ứng tuyển",
+      value: 2,
+    },
+  ];
+
+  const jobdetail = queryClient.getQueryData(["job", job_id]) as any;
+  useEffect(() => {
+    if (jobdetail) {
+      setJob(jobdetail);
+      setJob((prevJob) => ({
+        ...prevJob,
+        id: jobdetail?.id,
+      }));
+      setPickedData(data.find((item) => item.value === jobdetail?.status));
+      const skillsPost = [];
+      jobdetail?.skills.map((item) => {
+        skillsPost.push({ id: item.skill_id, name: item.skill_name });
+      });
+      setSkill(skillsPost);
+      setPickedData(
+        data.find((item) => item.value === Number(jobdetail?.status))
+      );
+      setImage(jobdetail?.thumbnail);
+    }
+  }, [jobdetail]);
+
+  const [image, setImage] = useState(null);
+
   const [document, setDocument] = useState(null);
 
-  // pick document
   const pickDocument = async () => {
     try {
       let result = await DocumentPicker.getDocumentAsync({
         type: "*/*",
         copyToCacheDirectory: false,
       });
-      console.log(result);
       if (!result.canceled) {
-        // try {
-        //   const base64 = await FileSystem.readAsStringAsync(
-        //     result.assets[0].uri,
-        //     {
-        //       encoding: FileSystem.EncodingType.Base64,
-        //     }
-        //   );
-
-          setDocument(result.assets[0].name);
-          setJob((prevJob) => ({
-            ...prevJob,
-            content_file: {
-              name: result.assets[0].name,
-              type: result.assets[0].mimeType,
-              uri: result.assets[0].uri
-            },
-          }));
-        // } catch (error) {
-        //   console.error("Error converting file to base64:", error);
-        // }
+        setDocument(result.assets[0].name);
+        setJob((prevJob) => ({
+          ...prevJob,
+          content_file: {
+            name: result.assets[0].name,
+            type: result.assets[0].mimeType,
+            uri: result.assets[0].uri,
+          },
+        }));
       }
     } catch (error) {}
   };
-  // pick image
-  const [image, setImage] = useState(null);
+  // pick
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       quality: 1,
-      base64: true,
     });
 
     if (!result.canceled) {
-      setImage({
-        base64: result.assets[0].base64,
-        width: result.assets[0].width,
-        height: result.assets[0].height,
-      });
-
+      setImage(result.assets[0].uri);
       setJob((prevJob) => ({
         ...prevJob,
         thumbnail: {
@@ -108,19 +135,14 @@ const ModalJob = ({ setModalVisible }) => {
     }
   };
 
-  // search skill
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [skill, setSkill] = useState([]);
-  
-
+  const listSkill = queryClient.getQueryData(["listSkills"]) as any;
   const onChangeTextSkill = (text) => {
     setSearchQuery(text);
-    const listSkill = queryClient.getQueryData(["listSkills"]) as any;
     const f1 = listSkill?.data.filter((item) =>
       item.name.toLowerCase().includes(text.toLowerCase())
     );
-    const f2 = f1.filter((item) => !skill.some((i) => i.id === item.id));
+
+    const f2 = f1.filter((item) => !skill.some((i) => i.id === item.id + ""));
     setFilteredSuggestions(f2);
   };
 
@@ -143,23 +165,21 @@ const ModalJob = ({ setModalVisible }) => {
       setJob({ ...job, deadline: adjustedDate });
     }
   };
-const createJob = useMutation({
-  mutationFn: async (job: Job) => await createJobApi(job, token),
-  onSuccess: (data) => {
-    queryClient.invalidateQueries({ queryKey: ["listpostopen", 1] });
-    setModalVisible(false);
-    // console.log(data);
-  },
-  onError: (error) => {
-    console.log(error);
-  }
-})
-  
-  const handCreateJob = async () => {
-    createJob.mutate(job);  
-    // console.log(job);
+  const editJob = useMutation({
+    mutationFn:async() => await editJobApi(job, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["job", job_id]});
+      Alert.alert("Sửa job thành công");
+      setModalVisible(false);
+    },
+    onError: (error) => {
+      Alert.alert("Error", error["reponse"].data.message);
+      console.log(error);
+    }
+  })
+  const handEditJob = async () => {
+    editJob.mutate();
   };
-
   return (
     <KeyboardAvoidingView
       keyboardVerticalOffset={2}
@@ -171,6 +191,18 @@ const createJob = useMutation({
           onPress={Keyboard.dismiss}
         >
           <View style={{ marginTop: "10%" }}>
+            {editJob.isPending && (
+              <View
+                style={{
+                  ...StyleSheet.absoluteFillObject, // Đặt spinner ở vị trí tuyệt đối
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
+            )}
             <View style={styles.header}>
               <IconAntDesign
                 name="closecircle"
@@ -186,10 +218,12 @@ const createJob = useMutation({
                   textAlign: "center",
                 }}
               >
-                Tạo job
+                Sửa job
               </Text>
             </View>
-
+            <TouchableOpacity style={{marginLeft:20}} onPress={() => setIsEdit(!isEdit)}>
+              <IconFontAwesome name={isEdit?"save":"edit"} size={30} color="black" />
+            </TouchableOpacity>
             <View style={styles.containerInput}>
               <Text style={styles.titleInput}>Tiêu đề</Text>
               <View style={styles.input}>
@@ -197,6 +231,7 @@ const createJob = useMutation({
                   style={styles.textInput}
                   placeholder="write title"
                   value={job.title}
+                  editable={false}
                   onChangeText={(title) => setJob({ ...job, title })}
                 />
               </View>
@@ -211,6 +246,7 @@ const createJob = useMutation({
                   numberOfLines={2}
                   value={job.desc}
                   onChangeText={(desc) => setJob({ ...job, desc })}
+                  editable={isEdit}
                 />
               </View>
             </View>
@@ -224,6 +260,7 @@ const createJob = useMutation({
                   numberOfLines={4}
                   value={job.content}
                   onChangeText={(content) => setJob({ ...job, content })}
+                  editable={isEdit}
                 />
               </View>
             </View>
@@ -238,6 +275,7 @@ const createJob = useMutation({
                   onChangeText={(bids) =>
                     setJob({ ...job, bids: Number(bids) })
                   }
+                  editable={false}
                 />
               </View>
             </View>
@@ -246,86 +284,115 @@ const createJob = useMutation({
               <View style={{ alignItems: "flex-start", marginVertical: 10 }}>
                 <DateTimePicker
                   testID="dateTimePicker"
-                  value={job.deadline}
+                  value={new Date(job.deadline)}
                   mode="date" // You can change this to "time" for a time picker
                   display="default"
                   onChange={onChange}
                 />
               </View>
-            </View>
+            </View>                              
             {/* pick thumbnail */}
             <View style={styles.containerInput}>
-              <Button title="Chọn thumbnail" onPress={pickImage} />
+              <Text style={styles.titleInput}>Thumbnail</Text>
+              {isEdit && <Button title="Chọn thumbnail" onPress={pickImage} />}
               <View style={{ alignItems: "flex-start", marginVertical: 10 }}>
                 {image && (
                   <Image
-                    source={{ uri: `data:image/jpeg;base64,${image.base64}` }}
-                    style={{ width: image.width / 3, height: image.height / 3 }}
+                    source={{ uri: image }}
+                    style={{
+                      width: 200,
+                      height: 200,
+                    }}
                   />
                 )}
               </View>
             </View>
             {/* pick document */}
             <View style={styles.containerInput}>
-              <Button title="Chọn file mô tả" onPress={pickDocument} />
-              {document && <Text>{document}</Text>}
+              <Text style={styles.titleInput}>File mô tả</Text>
+              {isEdit ? (
+                <>
+                  <Button title="Chọn file mô tả" onPress={pickDocument} />
+                  {document && <Text>{document}</Text>}
+                </>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => Linking.openURL(job.content_file)}
+                >
+                  <Text>{String(job.content_file).split("/").pop()}</Text>
+                </TouchableOpacity>
+              )}
             </View>
+
             {/* search skill */}
             <View>
-              <View>
-                <Text style={styles.titleInput}>Tìm kỹ năng</Text>
-                <View style={styles.input}>
-                  <TextInput
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChangeText={onChangeTextSkill}
-                  />
-                  {filteredSuggestions.length > 0 && searchQuery !== "" && (
-                    <ScrollView style={{ maxHeight: 200 }}>
-                      {filteredSuggestions.map((item) => (
-                        <TouchableOpacity
-                          style={styles.item}
-                          key={item.id}
-                          onPress={() => {
-                            const newSkill = [
-                              ...skill,
-                              { id: item.id, name: item.name, point:100 },
-                            ];
-                            setSkill(newSkill);
-                            setFilteredSuggestions(
-                              filteredSuggestions.filter(
-                                (i) => i.id !== item.id
-                              )
-                            );
-                            setJob((prevJob) => ({
-                              ...prevJob,
-                              skill: newSkill,
-                            }));
-                          }}
-                        >
-                          <Text style={styles.suggestionItem}>{item.name}</Text>
-                        </TouchableOpacity>
-                      ))}
-                    </ScrollView>
-                  )}
+              {isEdit && (
+                <View>
+                  <Text style={styles.titleInput}>Tìm kỹ năng</Text>
+                  <View style={styles.input}>
+                    <TextInput
+                      placeholder="Search..."
+                      value={searchQuery}
+                      onChangeText={onChangeTextSkill}
+                    />
+                    {filteredSuggestions.length > 0 && searchQuery !== "" && (
+                      <ScrollView style={{ maxHeight: 200 }}>
+                        {filteredSuggestions.map((item) => (
+                          <TouchableOpacity
+                            style={styles.item}
+                            key={item.id}
+                            onPress={() => {
+                              const newSkill = [
+                                ...skill,
+                                { id: item.id, name: item.name, point: 100 },
+                              ];
+                              setSkill(newSkill);
+                              setFilteredSuggestions(
+                                filteredSuggestions.filter(
+                                  (i) => i.id !== item.id
+                                )
+                              );
+                              setJob((prevJob) => ({
+                                ...prevJob,
+                                skill: newSkill,
+                              }));
+                            }}
+                          >
+                            <Text style={styles.suggestionItem}>
+                              {item.name}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
+                      </ScrollView>
+                    )}
+                  </View>
                 </View>
-              </View>
+              )}
               <View style={styles.containerInput}>
-                <Text style={styles.titleInput}>Chọn kỹ năng</Text>
+                <Text style={styles.titleInput}>Kỹ năng</Text>
                 <View style={styles.containerSkill}>
                   {skill.map((item) => (
                     <TouchableOpacity
                       key={item.id}
                       style={styles.skill}
                       onPress={() => {
+                        if (isEdit === false) return;
                         const newSkills = skill.filter((i) => i.id !== item.id);
                         setSkill(newSkills);
                         setFilteredSuggestions([...filteredSuggestions, item]);
-                        setJob((prevJob) => ({ ...prevJob, skill: newSkills }));
+                        setJob((prevJob) => ({
+                          ...prevJob,
+                          skill: newSkills,
+                        }));
                       }}
+                      activeOpacity={isEdit ? 1 : 0}
                     >
                       <Text
-                        style={{ color: "white", fontSize: 18, marginRight: 5 }}
+                        style={{
+                          color: "white",
+                          fontSize: 18,
+                          marginRight: 5,
+                        }}
                       >
                         {item.name}
                       </Text>
@@ -333,23 +400,37 @@ const createJob = useMutation({
                   ))}
                 </View>
               </View>
+
+              <View style={styles.containerInput}>
+                <Dropdown
+                  style={styles.dropdown}
+                  data={data}
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  value={pickedData}
+                  onChange={(item) => {
+                    setPickedData(item.value);
+                    setJob((prevJob) => ({
+                      ...prevJob,
+                      status: item.value,
+                    }));
+                  }}
+                />
+              </View>
               {/* footer  */}
               <View style={styles.containerButton}>
                 <TouchableOpacity
                   style={[styles.button, { backgroundColor: "red" }]}
+                  onPress={() => setModalVisible(false)}
                 >
                   <Text style={{ color: "white", fontSize: 20 }}>Hủy</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.button, { backgroundColor: "green" }]}
-                  onPress={handCreateJob}
+                  onPress={handEditJob}
                 >
-                  <Text style={{ color: "white", fontSize: 20 }}>Tạo job</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: "#0866FF" }]}
-                >
-                  <Text style={{ color: "white", fontSize: 20 }}>Đăng job</Text>
+                  <Text style={{ color: "white", fontSize: 20 }}>Sửa job</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -436,5 +517,17 @@ const styles = StyleSheet.create({
     padding: 5,
     marginVertical: 3,
   },
+  containerInputTitle: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  dropdown: {
+    borderColor: "black",
+    borderWidth: 1,
+    marginHorizontal: 10,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    marginVertical: 10,
+  },
 });
-export default ModalJob;
+export default ModalEditJob;

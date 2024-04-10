@@ -6,22 +6,61 @@ import {
   TouchableOpacity,
   Modal,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from "react-native";
 import IconEntypo from "react-native-vector-icons/Entypo";
 import { useState } from "react";
-import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "../../../utils/format";
-import { getJobApi } from "../../../apis/job.api";
+import { deletePostApi, getJobApi } from "../../../apis/job.api";
+import ModalEditJob from "./modalEditJob";
 const Job = ({ navigation, job }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleEdit, setModalVisibleEdit] = useState(false);
   const queryClient = useQueryClient();
-  
+  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const token = infoLogin["access_token"];
   const handDetailJob = () => {
     navigation.navigate("TabDetailJob", { data: { jobid: job["id"] } });
   };
-
+  const deletePost = useMutation({
+    mutationFn: () => deletePostApi(job["id"], token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["listpostopen"] });
+      alert("Xóa bài đăng thành công");
+      setModalVisible(false);
+    },
+    onError: (error) => {
+      alert("Xóa bài đăng thất bại");
+      console.log(error);
+    },
+  });
+  const handDeletePost = async () => {
+    deletePost.mutate();
+  };
+  const detailJob = useQuery({
+    queryKey: ["job", job["id"]],
+    queryFn: async () => {
+      return await getJobApi(job["id"], token).then((res) => {
+        queryClient.setQueryData(["job", job["id"]], res.data.data);
+        return res.data.data;
+      });
+    },
+  });
   return (
     <TouchableOpacity style={styles.container} onPress={handDetailJob}>
+      {deletePost.isPending && (
+        <View
+          style={{
+            ...StyleSheet.absoluteFillObject, // Đặt spinner ở vị trí tuyệt đối
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )}
       <Text
         style={{
           fontSize: 20,
@@ -61,7 +100,11 @@ const Job = ({ navigation, job }) => {
         }}
       >
         <View>
-          <Text style={styles.text}>0</Text>
+          {detailJob.data && (
+            <Text style={styles.text}>
+              {detailJob.data["applied_count"] || 0}
+            </Text>
+          )}
           <Text style={{ fontSize: 20 }}>Ứng tuyển</Text>
         </View>
         <View>
@@ -75,19 +118,29 @@ const Job = ({ navigation, job }) => {
         </TouchableWithoutFeedback>
       </View>
 
-      {/* modal */}
+      {/* modal optinal*/}
       <Modal animationType="slide" visible={modalVisible} transparent={true}>
         <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
+              <TouchableOpacity style={styles.input} onPress={handDeletePost}>
+                <Text
+                  style={[styles.text, { color: "red", paddingVertical: 10 }]}
+                >
+                  Ẩn bài đăng
+                </Text>
+              </TouchableOpacity>
               <TouchableOpacity
                 style={styles.input}
-                onPress={() => setModalVisible(false)}
+                onPress={() => {
+                  setModalVisibleEdit(true);
+                  setModalVisible(false);
+                }}
               >
                 <Text
                   style={[styles.text, { color: "red", paddingVertical: 10 }]}
                 >
-                  Xóa bài đăng
+                  Sửa bài đăng
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -101,6 +154,13 @@ const Job = ({ navigation, job }) => {
             </View>
           </View>
         </TouchableWithoutFeedback>
+      </Modal>
+
+      <Modal animationType="slide" visible={modalVisibleEdit}>
+        <ModalEditJob
+          job_id={job["id"]}
+          setModalVisible={setModalVisibleEdit}
+        />
       </Modal>
     </TouchableOpacity>
   );
