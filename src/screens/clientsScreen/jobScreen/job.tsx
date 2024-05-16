@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import IconEntypo from "react-native-vector-icons/Entypo";
 import { useState } from "react";
-import ModalJob from "../postScreen/modalJob";
 import ModalEditJob from "../postScreen/modalEditJob";
 const Job = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);

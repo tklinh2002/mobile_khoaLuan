@@ -14,14 +14,13 @@ export const createJobApi = async (job: Job, token: string) => {
     "-" +
     job.deadline.getDate();
   formData.append("deadline", formatDate);
-  formData.append("min_proposals", job.min_proposals.toString());
   formData.append("status", 1 + "");
   // add skill
-  job.skill.forEach((skill, index) => {
-    formData.append(`skill[${index}][skill_id]`, skill.id.toString());
-    formData.append(`skill[${index}][skill_name]`, skill.name);
-    formData.append(`skill[${index}][point]`, skill.point.toString());
+  const skilltemp = [];
+  job.skill.forEach((skill) => {
+    skilltemp.push(skill.id);
   });
+  formData.append("skill", skilltemp.toString());
 
   // add file
   if (job.content_file) {
@@ -30,7 +29,6 @@ export const createJobApi = async (job: Job, token: string) => {
   if (job.thumbnail) {
     formData.append("thumbnail", job.thumbnail);
   }
-  console.log(formData);
 
   return await http.httpform.post("/api/v1/client/job/create-job", formData, {
     headers: {
@@ -49,15 +47,13 @@ export const editJobApi = async (job: Job, token: string) => {
   const formatDate =
     date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
   formData.append("deadline", formatDate);
-  // formData.append("min_proposals", job.min_proposals.toString());
   formData.append("status", job.status + "");
   // add skill
-  console.log("job  " + job["skills"]);
-  job["skills"].forEach((skill, index) => {
-    formData.append(`skill[${index}][skill_id]`, skill.skill_id.toString());
-    formData.append(`skill[${index}][skill_name]`, skill.skill_name);
-    formData.append(`skill[${index}][point]`, 100 + "");
+  const skilltemp = [];
+  job["skills"].forEach((skill) => {
+    skilltemp.push(skill.id);
   });
+  formData.append("skill", skilltemp.toString());
 
   // add file
   if (job.content_file) {
@@ -66,7 +62,6 @@ export const editJobApi = async (job: Job, token: string) => {
   if (job.thumbnail) {
     formData.append("thumbnail", job.thumbnail);
   }
-  console.log(formData);
 
   return await http.httpform.post(
     `/api/v1/client/job/update-jobs/${job.id}`,
@@ -91,6 +86,7 @@ export const getListMyPostApi = (page, num, status, token) => {
   });
 };
 
+// api chung cho freelancer và client
 export const getJobApi = (id: string, token: string) => {
   return http.httpjson.get(`/api/v1/job/${id}`, {
     headers: {
@@ -115,16 +111,24 @@ export const inviteFreelancerApi = (
   job_id,
   freelancer_id,
   mail_invite,
-  token
+  token,
+  title
 ) => {
   const formData = new FormData();
-  formData.append("job_id", job_id+"");
+  formData.append("job_id", job_id + "");
   formData.append("freelancer_id", freelancer_id);
   formData.append("mail_invite", mail_invite);
-  console.log(formData);
-  return http.httpform.post(`/api/v1/client/freelancers/invite`,formData, {
+  formData.append("title", title);
+
+  return http.httpform.post(`/api/v1/client/freelancers/invite`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+};
+export const upLoadSignatureApi = (job_id, signature, token) => {
+  const formData = new FormData();
+  const blod = new Blob([signature], { type: "image/png" });
+  formData.append('sign', blod, 'uploaded_image.png')
+  return http.httpform.post(`/api/v1//upload-file`, signature);
 };

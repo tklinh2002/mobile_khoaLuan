@@ -7,21 +7,17 @@ import {
   Modal,
   ActivityIndicator,
 } from "react-native";
-import Header from "../../component/header";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import Job from "./job";
 import ModalJob from "./modalJob";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Panigation from "../../component/pagination";
-import {
-  InvalidateQueryFilters,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getListMyPostApi } from "../../../apis/job.api";
 import { getListSkill } from "../../../apis/auth.api";
 import { Button, RadioButton, TextInput } from "react-native-paper";
 import IconEvilIcons from "react-native-vector-icons/EvilIcons";
+import { AuthContext } from "../../../utils/context";
 const PostScreen = ({ navigation }) => {
   const [search, setSearch] = useState("");
   const [statusJob, setStatusJob] = useState("1");
@@ -39,7 +35,7 @@ const PostScreen = ({ navigation }) => {
   };
 
   const queryClient = useQueryClient();
-  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
   const listPost = useQuery({
     queryKey: ["listpostopen", page],
@@ -61,7 +57,7 @@ const PostScreen = ({ navigation }) => {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
   return (
-    <View style={{flex:1}}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           flexDirection: "row",
@@ -82,14 +78,14 @@ const PostScreen = ({ navigation }) => {
           </View>
         </TouchableOpacity>
       </View>
-      <View style={styles.searchContainer}>
+      {/* <View style={styles.searchContainer}>
         <TextInput
           mode="outlined"
           style={{ flex: 1 }}
           placeholder="Tìm kiếm job"
           onChangeText={(text) => setSearch(text)}
         />
-        {/* <TouchableOpacity
+        <TouchableOpacity
           onPress={handFindJob}
           style={{
             borderColor: "black",
@@ -100,8 +96,8 @@ const PostScreen = ({ navigation }) => {
           }}
         >
           <IconEvilIcons name="search" size={50} color="white" />
-        </TouchableOpacity> */}
-      </View>
+        </TouchableOpacity>
+      </View> */}
       <View>
         <TouchableOpacity onPress={() => setModalVisibleStatusJob(true)}>
           <Text style={{ marginLeft: 10, fontStyle: "italic", color: "blue" }}>
@@ -109,7 +105,7 @@ const PostScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <ScrollView >
+      <ScrollView>
         {listPost.data?.data?.map((job) => (
           <Job key={job.id} job={job} navigation={navigation} />
         ))}
@@ -120,7 +116,7 @@ const PostScreen = ({ navigation }) => {
       <Modal visible={modalVisible} animationType="slide">
         <ModalJob setModalVisible={setModalVisible} />
       </Modal>
-        {/* modal status job */}
+      {/* modal status job */}
       <Modal
         animationType="slide"
         visible={modalVisibleStatusJob}

@@ -10,7 +10,6 @@ export interface Job {
   bids: number;
   deadline: Date;
   skill: Array<Skill>;
-  min_proposals:number;
   content_file: any;
   status: number;
 }

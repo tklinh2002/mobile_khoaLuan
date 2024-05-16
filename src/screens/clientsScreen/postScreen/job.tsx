@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   Text,
@@ -14,11 +14,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "../../../utils/format";
 import { deletePostApi, getJobApi } from "../../../apis/job.api";
 import ModalEditJob from "./modalEditJob";
+import { AuthContext } from "../../../utils/context";
 const Job = ({ navigation, job }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleEdit, setModalVisibleEdit] = useState(false);
   const queryClient = useQueryClient();
-  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
   const handDetailJob = () => {
     navigation.navigate("TabDetailJob", { data: { jobid: job["id"] } });
@@ -32,7 +33,6 @@ const Job = ({ navigation, job }) => {
     },
     onError: (error) => {
       alert("Xóa bài đăng thất bại");
-      console.log(error);
     },
   });
   const handDeletePost = async () => {
@@ -47,6 +47,7 @@ const Job = ({ navigation, job }) => {
       });
     },
   });
+  if(detailJob.isLoading) return <ActivityIndicator size="large" color="#0000ff" />
   return (
     <TouchableOpacity style={styles.container} onPress={handDetailJob}>
       {deletePost.isPending && (
@@ -108,7 +109,7 @@ const Job = ({ navigation, job }) => {
           <Text style={{ fontSize: 20 }}>Ứng tuyển</Text>
         </View>
         <View>
-          <Text style={styles.text}>0</Text>
+          <Text style={styles.text}>{[...detailJob.data["list_invite"]].length || 0}</Text>
           <Text style={{ fontSize: 20 }}>Lời mời</Text>
         </View>
         <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>

@@ -7,7 +7,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { Button, TextInput } from "react-native-paper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -15,13 +15,13 @@ import { applyJobApi } from "../../../apis/job.apiF";
 import { useState } from "react";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
+import { AuthContext } from "../../../utils/context";
 const ModalApplyJob = ({ setModalVisible, job }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [proposal, setProposal] = useState("0");
   const [coverLetter, setcoverLetter] = useState("");
   const [document, setDocument] = useState(null);
   const queryClient = useQueryClient();
-  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
   // pick document
   const pickDocument = async () => {
@@ -39,25 +39,13 @@ const ModalApplyJob = ({ setModalVisible, job }) => {
       }
     } catch (error) {}
   };
-  // const applyJob = useMutation({
-  //   mutationFn: () =>
-  //     applyJobApi(job["id"], proposal, coverLetter, document, token),
-  //   onSuccess: () => {
-  //     alert("Ứng tuyển thành công");
-  //     setModalVisible(false);
-  //   },
-  //   onError: (error) => {
-  //     Alert.alert("Lỗi", error["response"].data.message);
-  //     console.log(error);
-  //   },
-  // });
 
   const handApply = async () => {
     setIsLoading(true);
     // applyJob.mutate();
     const rs = await applyJobApi(
       job["id"],
-      proposal,
+      0,
       coverLetter,
       document,
       token
@@ -94,15 +82,6 @@ const ModalApplyJob = ({ setModalVisible, job }) => {
           value={coverLetter}
           onChangeText={(text) => setcoverLetter(text)}
         />
-        <TextInput
-          label="Số lượng proposal"
-          keyboardType="decimal-pad"
-          mode="outlined"
-          style={styles.textInput}
-          value={proposal}
-          onChangeText={(text) => setProposal(text)}
-        />
-
         <TouchableOpacity onPress={pickDocument}>
           <Text style={[styles.text, { fontStyle: "italic", color: "blue" }]}>
             Chọn file CV

@@ -7,8 +7,12 @@ import React from "react";
 import ContractProgessScreen from "../screens/freelancerScreen/contractScreen/contractProgessScreen";
 import ContractSignScreen from "../screens/freelancerScreen/contractScreen/contractSignScreen";
 import ContractCompleteScreen from "../screens/freelancerScreen/contractScreen/contractCompleteScreen";
+import { useContractRead, useQueryClient } from "wagmi";
+import { abi } from "../../abi";
+import { useContract } from "../hook/hook";
 
 const TabContractFreelancer = () => {
+
   const Tab = createMaterialTopTabNavigator();
   return (
     <Tab.Navigator initialRouteName="">

@@ -11,13 +11,11 @@ const Panigation = ({setpage, length}) => {
   const goToPreviousPage = () => {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
     setpage(currentPage-1)
-    console.log(currentPage-1)
   };
 
   const goToNextPage = () => {
     setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     setpage(currentPage+1)
-    console.log(currentPage+1)
   };
   return (
     <View style={styles.paginationContainer}>

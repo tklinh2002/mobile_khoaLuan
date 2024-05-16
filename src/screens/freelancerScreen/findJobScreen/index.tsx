@@ -4,42 +4,24 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  TouchableHighlight,
-  Keyboard,
-  TouchableNativeFeedback,
   ScrollView,
   Modal,
   ActivityIndicator,
 } from "react-native";
-import Header from "../../component/header";
 import IconEntypo from "react-native-vector-icons/Entypo";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ModalFind from "./modalFind";
 import Panigation from "../../component/pagination";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getListJobApiF, jobAplliedAPI } from "../../../apis/job.apiF";
 import Job from "./job";
-const PAGE_SIZE = 5;
+import { AuthContext } from "../../../utils/context";
+import { useJob } from "../../../hook/hook";
 const FindJodScreen = ({ navigation }) => {
-  const queryClient = useQueryClient();
-  const infoLogin = queryClient.getQueryData(["infoLogin"]);
-  const token = infoLogin["access_token"];
   const [modalVisible, setModalVisible] = useState(false);
   const [page, setPage] = useState(1);
-  const jobApplied = useQuery({
-    queryKey: ["jobApplied"],
-    queryFn: async () =>
-      jobAplliedAPI(token).then((res) => {
-        queryClient.setQueryData(["jobApplied"], res.data.data);
-        return res.data.data;
-      }),
-  });
-
-  const getListJob = useQuery({
-    queryKey: ["jobs", page],
-    queryFn: async () =>
-      getListJobApiF(page, 10, null, null, token).then((res) => res.data.data),
-  });
+  const { getListJob, jobApplied } = useJob(page);
+  console.log("getListJob", getListJob);
   return (
     <ScrollView style={styles.container}>
       <Text style={{ fontSize: 30, fontWeight: "bold", marginLeft: 10 }}>
@@ -59,17 +41,20 @@ const FindJodScreen = ({ navigation }) => {
       </TouchableOpacity>
       {/* danh sách công việc */}
       {jobApplied.isLoading || getListJob.isLoading ? (
-        <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-      
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
           <ActivityIndicator size="large" color="#0000ff" />
         </View>
       ) : (
-        getListJob.data?.data?.map((job) => <Job job={job} key={job.id} />)
+        getListJob.data?.data?.data?.map((job) => (
+          <Job job={job} key={job.id} />
+        ))
       )}
 
       {/* phân trang */}
 
-      <Panigation length={getListJob.data?.total} setpage={setPage} />
+      <Panigation length={getListJob.data?.data?.total} setpage={setPage} />
 
       {/*Modal tìm kiếm*/}
 

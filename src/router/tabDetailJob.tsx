@@ -2,17 +2,18 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import HireScreen from "../screens/clientsScreen/hireScreen";
 import DetailJob from "../screens/clientsScreen/detailJob";
 import InviteScreen from "../screens/clientsScreen/inviteScreen";
-import React from "react";
+import React, { useContext } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getJobApi } from "../apis/job.api";
 import { View, Text } from "react-native";
+import { AuthContext } from "../utils/context";
 
 const TabDetailJob = () => {
   const route = useRoute();
   const id = route.params["data"]["jobid"];
   const queryClient = useQueryClient();
-  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
   const detailJob = useQuery({
     queryKey: ["job", id],

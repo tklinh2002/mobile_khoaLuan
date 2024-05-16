@@ -8,38 +8,45 @@ import {
   TouchableWithoutFeedback,
   Image,
 } from "react-native";
-import IconEntypo from "react-native-vector-icons/Entypo";
+
 import { useState } from "react";
-import { useQueries } from "@tanstack/react-query";
-import ModalCreateContract from "./modalCreateContract";
 import { Button } from "react-native-paper";
 import ModalDetailContract from "../../component/modalDetailContract";
-const Contract = ({ navigation }) => {
+import ModalReportProgess from "../../component/modalReportProgess";
+const Contract = ({ contract }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const i = 3;
+  const [modalVisibleTask, setModalVisibleTask] = useState(false);
+  const i = contract?.status;
   const status = {
     0: {
-      text: "Chưa ký",
-      color: "#FFAE12",
+      text: "Freelancer chưa ký",
+      color: "#C46E41",
     },
-
     1: {
-      text: "Đang thực hiện",
+      text: "Đang thực hiện", // freelancer ký
       color: "#0866FF",
     },
     2: {
-      text: "Đã hủy",
-      color: "red",
+      text: "Chờ xác nhận hoàn thành", // freelancer báo hoàn thành
+      color: "#00AD85",
     },
     3: {
-      text: "Đã hoàn thành",
+      text: "Đã hoàn thành", // client xác nhận hợp đồng và kết thúc
       color: "green",
+    },
+    4: {
+      text: "Freelancer hủy", // freelancer hủy
+      color: "red",
+    },
+    5: {
+      text: "Client hủy", // client hủy
+      color: "red",
     },
   };
 
   return (
     <View style={styles.container}>
-      <View style={{flexDirection:"row"}}>
+      <View style={{ flexDirection: "row" }}>
         <View style={{ flex: 1 }}>
           <Text
             style={{
@@ -49,65 +56,32 @@ const Contract = ({ navigation }) => {
               marginHorizontal: 10,
             }}
           >
-            Backend
+            {contract?.title}
           </Text>
-          <View style={{ marginLeft: 10, marginTop: 10 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "bold",
-                color: "gray",
-              }}
-            >
-              Ngày tạo: 27/02/2024
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              marginHorizontal: 10,
-              marginVertical: 10,
-            }}
-          >
-            <Image
-              source={require("../../../assets/avatar_temp.jpg")}
-              style={{ width: 50, height: 50, borderRadius: 25 }}
-            />
-            <Text style={{ marginHorizontal: 10, fontSize: 16 }}>
-              Nguyễn Văn a
-            </Text>
-          </View>
-          <Text
-            style={{ fontSize: 16, fontWeight: "700", marginHorizontal: 10 }}
-          >
-            2ETH
-          </Text>
-        </View>
-
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <View
-            style={[
-              styles.button,
-              { padding: 10, width: 160 },
-              { backgroundColor: status[i].color },
-            ]}
-          >
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "700",
-                marginHorizontal: 10,
-                color: "white",
-              }}
-            >
-              {status[i].text}
-            </Text>
-          </View>
+          <View style={{ marginLeft: 10, marginTop: 10 }}></View>
         </View>
       </View>
-      <TouchableOpacity onPress={()=>setModalVisible(true)}>
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <View
+          style={[
+            styles.button,
+            { padding: 10 },
+            { backgroundColor: status[i].color },
+          ]}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "700",
+              marginHorizontal: 10,
+              color: "white",
+            }}
+          >
+            {status[i].text}
+          </Text>
+        </View>
+      </View>
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
         <Button
           mode="contained"
           style={{ marginHorizontal: 10, marginVertical: 10, borderRadius: 10 }}
@@ -115,11 +89,34 @@ const Contract = ({ navigation }) => {
           Xem chi tiết hợp đồng
         </Button>
       </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        visible={modalVisible}
-      >
-        <ModalDetailContract setmodalvisiable={setModalVisible}/>
+      {contract?.status != 0 && (
+        <TouchableOpacity onPress={() => setModalVisibleTask(true)}>
+          <Button
+            mode="contained"
+            style={{
+              marginHorizontal: 10,
+              marginVertical: 10,
+              borderRadius: 10,
+              backgroundColor: "green",
+            }}
+          >
+            Xem báo cáo task
+          </Button>
+        </TouchableOpacity>
+      )}
+      {/* modal task */}
+      <Modal visible={modalVisibleTask} animationType="slide">
+        <ModalReportProgess
+          setmodalvisiable={setModalVisibleTask}
+          jobId={contract?.jobIdcurent}
+        />
+      </Modal>
+
+      <Modal animationType="slide" visible={modalVisible}>
+        <ModalDetailContract
+          setmodalvisiable={setModalVisible}
+          contract={contract}
+        />
       </Modal>
     </View>
   );

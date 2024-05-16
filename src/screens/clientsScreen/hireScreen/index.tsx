@@ -9,7 +9,6 @@ const HireScreen = ({ navigation }) => {
   const queryClient = useQueryClient();
   const job = queryClient.getQueryData(["job", id]);
   const applied = (job["applied"] as any) || [];
-  console.log(job);
   return (
     <>
       {job["applied_count"] > 0 ? (

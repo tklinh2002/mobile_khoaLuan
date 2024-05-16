@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -27,6 +27,7 @@ import * as DocumentPicker from "expo-document-picker";
 import IconFontAwesome from "react-native-vector-icons/FontAwesome";
 import { Dropdown } from "react-native-element-dropdown";
 import type { PickerItem } from "react-native-woodpicker";
+import { AuthContext } from "../../../utils/context";
 
 const ModalEditJob = ({ setModalVisible, job_id }) => {
   const initJob: Job = {
@@ -39,7 +40,6 @@ const ModalEditJob = ({ setModalVisible, job_id }) => {
     bids: 0,
     deadline: new Date(),
     skill: [],
-    min_proposals: 0,
     content_file: undefined,
     status: 0,
   };
@@ -51,7 +51,7 @@ const ModalEditJob = ({ setModalVisible, job_id }) => {
   const [skill, setSkill] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const queryClient = useQueryClient();
-  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
   // status post
   const [pickedData, setPickedData] = useState<PickerItem>();
@@ -174,7 +174,6 @@ const ModalEditJob = ({ setModalVisible, job_id }) => {
     },
     onError: (error) => {
       Alert.alert("Error", error["reponse"].data.message);
-      console.log(error);
     }
   })
   const handEditJob = async () => {
@@ -344,7 +343,7 @@ const ModalEditJob = ({ setModalVisible, job_id }) => {
                             onPress={() => {
                               const newSkill = [
                                 ...skill,
-                                { id: item.id, name: item.name, point: 100 },
+                                { id: item.id, name: item.name},
                               ];
                               setSkill(newSkill);
                               setFilteredSuggestions(

@@ -12,22 +12,25 @@ import {
   Alert,
 } from "react-native";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { loginAuth } from "../../apis/auth.api";
 import { TextInput } from "react-native-paper";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthContext } from "../../utils/context";
+import ModalLoading from "../component/modalLoading";
 const LoginScreen = ({ navigation }) => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const queryClient = useQueryClient();
-
+  const { infoLogin, login } = useContext(AuthContext);
   // button login
   const loginMutation = useMutation({
     mutationFn: () => loginAuth(username, password),
     onSuccess: (data) => {
       console.log("Login success:", data.data.data.access_token);
       const infoLogin = data.data.data;
+      login(infoLogin);
       queryClient.setDefaultOptions({
         queries: {
           staleTime: infoLogin.expires_in,
@@ -75,14 +78,15 @@ const LoginScreen = ({ navigation }) => {
           secureTextEntry={true}
           onChangeText={(text) => setPassword(text)}
         />
+        <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
+          <Text style={{ textAlign: "right", marginRight: 20 }}>
+            Quên mật khẩu?
+          </Text>
+        </TouchableOpacity>
 
-        {loginMutation.isPending ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-          <TouchableOpacity style={styles.button} onPress={handPressLogin}>
-            <Text style={{ fontSize: 20, color: "white" }}>Đăng nhập</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity style={styles.button} onPress={handPressLogin}>
+          <Text style={{ fontSize: 20, color: "white" }}>Đăng nhập</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={[
@@ -98,6 +102,19 @@ const LoginScreen = ({ navigation }) => {
             Đăng nhập với Google
           </Text>
         </TouchableOpacity>
+        {/* <ModalLoading visible={loginMutation.isPending} /> */}
+        <Modal visible={loginMutation.isPending} animationType="slide" transparent={true}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignContent: "center",
+              backgroundColor: "rgba(0,0,0,0.3)",
+            }}
+          >
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        </Modal>
       </View>
     </TouchableWithoutFeedback>
   );

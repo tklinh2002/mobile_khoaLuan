@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -23,9 +23,10 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { createJobApi } from "../../../apis/job.api";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
+import { AuthContext } from "../../../utils/context";
 const ModalJob = ({ setModalVisible }) => {
   const queryClient = useQueryClient();
-  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
   const formdata = new FormData();
   const initJob: Job = {
@@ -39,7 +40,6 @@ const ModalJob = ({ setModalVisible }) => {
     status: 0,
     id: "",
     client_id: "",
-    min_proposals: 0,
     content_file: undefined,
   };
   const [job, setJob] = useState<Job>(initJob);
@@ -116,6 +116,7 @@ const ModalJob = ({ setModalVisible }) => {
     const f1 = listSkill?.data.filter((item) =>
       item.name.toLowerCase().includes(text.toLowerCase())
     );
+
     const f2 = f1.filter((item) => !skill.some((i) => i.id === item.id));
     setFilteredSuggestions(f2);
   };
@@ -145,17 +146,15 @@ const createJob = useMutation({
     alert("Tạo job thành công");
     queryClient.invalidateQueries({ queryKey: ["listpostopen"] });
     setModalVisible(false);
-    // console.log(data);
   },
 
   onError: (error) => {
-  Alert.alert("Error", error["response"].data.message);  
+  Alert.alert("Error", error["response"].data.data);  
   },
 })
   
   const handCreateJob = async () => {
     createJob.mutate(job);  
-    // console.log(job);
   };
 
   return (
@@ -243,7 +242,7 @@ const createJob = useMutation({
                 <TextInput
                   style={styles.textInput}
                   placeholder="nhập lương"
-                  keyboardType="numeric"
+                  keyboardType="number-pad"
                   value={job.bids.toString()}
                   onChangeText={(bids) =>
                     setJob({ ...job, bids: Number(bids) })
@@ -299,7 +298,7 @@ const createJob = useMutation({
                           onPress={() => {
                             const newSkill = [
                               ...skill,
-                              { id: item.id, name: item.name, point:100 },
+                              { id: item.id, name: item.name },
                             ];
                             setSkill(newSkill);
                             setFilteredSuggestions(

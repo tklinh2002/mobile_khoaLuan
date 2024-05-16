@@ -24,7 +24,7 @@ const ModalFind = ({ setModalVisible }) => {
           <RadioButton.Group
             onValueChange={(newValue) => {
               setValue(newValue);
-              console.log(newValue);
+              // console.log(newValue);
             }}
             value={value}
           >
@@ -43,7 +43,6 @@ const ModalFind = ({ setModalVisible }) => {
           <RadioButton.Group
             onValueChange={(newValue) => {
               setBids(newValue);
-              console.log(newValue);
             }}
             value={bids}
           >

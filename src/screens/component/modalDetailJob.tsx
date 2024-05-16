@@ -1,16 +1,21 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import Skill from "../freelancerScreen/findJobScreen/skill";
-import { Title } from "react-native-paper";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Touchable,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
-import { formToJSON } from "axios";
 import { formatDate } from "../../utils/format";
-const ModalDetailJob = ({ setModalVisible , job}) => {
+const ModalDetailJob = ({ setModalVisible, job }) => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.content}>
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <Text style={[styles.title, { fontSize: 30, textAlign: "center" }]}>
-            Chi tiết công việc
+            Chi tiết ứng tuyển
           </Text>
           <IconAntDesign
             name="closecircle"
@@ -20,16 +25,32 @@ const ModalDetailJob = ({ setModalVisible , job}) => {
             onPress={() => setModalVisible(false)}
           />
         </View>
-        <Text style={styles.title}>{job["title"]}</Text>
-        <Text style={styles.text}>Mô tả công việc: {job["desc"]}</Text>
-        <Text style={styles.text}>Chi tiết công việc: {job["content"]}</Text>
-        <Text style={styles.text}>Ngân sách: {job["bids"]}</Text>
-        <Text style={styles.text}>Thời hạn: {formatDate(job["deadline"])}</Text>
-        <Text style={styles.text}>Kỹ năng</Text>
-        <View style={styles.containerSkill}>
-          {job?.Skills.map((skill) => {
-            return <Skill key={skill?.id} name={skill?.name} />;
-          })}
+        <View style={styles.content}>
+          <Text style={styles.title}>{job?.title}</Text>
+          <Text style={styles.text}>Mô tả công việc: {job?.desc}</Text>
+          <Text style={styles.text}>Chi tiết công việc: {job?.content}</Text>
+          <Text style={styles.text}>Ngân sách: {job?.bids}</Text>
+          <Text style={styles.text}>Thời hạn: {formatDate(job?.deadline)}</Text>
+        </View>
+
+        <View style={styles.content}>
+          <Text
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              color: "green",
+              fontWeight: "bold",
+            }}
+          >
+            Thông tin ứng tuyển
+          </Text>
+          <Text style={styles.text}>Giới thiệu: {job?.cover_letter}</Text>
+          <View>
+            <Text style={[styles.text, { fontStyle: "italic" }]}>CV: </Text>
+            <TouchableOpacity onPress={()=>Linking.openURL(job?.content_file)}>
+              <IconAntDesign name="filetext1" size={70} color="black" />
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -43,10 +64,10 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flex: 1,
     borderColor: "black",
-    borderWidth: 3,
+    borderWidth: 2,
     borderRadius: 10,
     padding: 10,
-    marginTop: 40,
+    marginVertical: 40,
   },
   title: {
     fontSize: 20,
@@ -60,9 +81,6 @@ const styles = StyleSheet.create({
     color: "black",
     marginBottom: 5,
     padding: 5,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 10,
     marginVertical: 10,
     textAlign: "left",
   },

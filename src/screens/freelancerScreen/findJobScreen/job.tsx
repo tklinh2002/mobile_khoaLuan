@@ -8,10 +8,11 @@ import ModalApplyJob from "./modalApplyJob";
 import { formatDate, formatTimePost } from "../../../utils/format";
 import { useQueryClient } from "@tanstack/react-query";
 const Job = ({ job }) => {
+  // console.log("job", job);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleApply, setModalVisibleApply] = useState(false);
   const queryClient = useQueryClient();
-  const jobApllied = queryClient.getQueryData(["jobApplied"]) as any[];
+  const jobApllied = queryClient.getQueryData(["jobApplied"])["data"] as any[];
   return (
     <View style={styles.container}>
       <View>
@@ -20,18 +21,17 @@ const Job = ({ job }) => {
         <Text numberOfLines={4}>{job["desc"]}</Text>
       </View>
       <View style={styles.skillContainer}>
-        {job?.Skills.map((skill) => {
-          return <Skill key={skill?.id} name={skill?.name} />;
+        {job?.skills.map((skill) => {
+          return <Skill key={skill?.skill_id} name={skill?.skill_name} />;
         })}
       </View>
       <View>
         <Text style={styles.text}>Ngân sách: {job["bids"]}</Text>
-        <Text style={styles.text}>Proposal: {job["min_proposals"]}</Text>
         <Text style={styles.text}>
           Ngày hết hạn: {formatDate(job["deadline"])}
         </Text>
       </View>
-      {jobApllied.some((item) => item.job_id == job["id"]) ? (
+      {[...jobApllied].some((item) => item.job_id == job["id"]) ? (
         <Button mode="contained" style={{ marginVertical: 10, backgroundColor:"#A1A1A1" }}>
           Đã ứng tuyển
         </Button>

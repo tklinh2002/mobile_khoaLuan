@@ -2,22 +2,24 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
-  Modal,
+  ActivityIndicator,
 } from "react-native";
-import Header from "../../component/header";
-import IconAntDesign from "react-native-vector-icons/AntDesign";
 import Contract from "./contract";
-import ModalJob from "../postScreen/modalJob";
 import React, { useState } from "react";
-import ModalCreateContract from "./modalCreateContract";
-const ContractScreen = ({navigation}) => {
-    const [modalVisible, setModalVisible] = useState(false);
-    const handCreateJob = () => {
-        setModalVisible(true);
-    }
+import { useContract } from "../../../hook/hook";
+import { useQueryClient } from "@tanstack/react-query";
+const ContractScreen = ({ navigation }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const handCreateJob = () => {
+    setModalVisible(true);
+  };
+  const queryClient = useQueryClient();
+  const infoLogin = queryClient.getQueryData(["infoLogin"]) as any;
 
+  const { getContractsByClientId } = useContract({
+    client_id: infoLogin?.user?.id,
+  });
   return (
     <View>
       <View
@@ -31,28 +33,34 @@ const ContractScreen = ({navigation}) => {
         <Text style={{ fontSize: 25, fontWeight: "500", flex: 1 }}>
           Danh sách hợp đồng
         </Text>
-        <TouchableOpacity onPress={handCreateJob}>
-          <View style={styles.button}>
-            <IconAntDesign name="plus" size={30} color="white" />
-            <Text style={{ fontSize: 20, fontWeight: "500", color: "white" }}>
-              Hợp đồng
-            </Text>
-          </View>
-        </TouchableOpacity>
       </View>
 
-      <ScrollView>
-        <Contract navigation={navigation}/>
-      </ScrollView>
-
-        {/* modal create contract */}
-      <Modal
-        animationType="slide"
-        visible={modalVisible}
-        >
-          <ModalCreateContract navigation={navigation} setmodalvisiable={setModalVisible}/>
-        </Modal>
-
+      {getContractsByClientId.isLoading ? (
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      ) : (
+        <ScrollView>
+          {getContractsByClientId.data.length > 0 ? (
+            <>
+              {getContractsByClientId.data?.map((contract) => (
+                <Contract key={contract.id} contract={contract} />
+              ))}
+            </>
+          ) : (
+            <Text
+              style={{
+                textAlign: "center",
+                color: "gray",
+                fontSize: 20,
+                margin: 20,
+              }}
+            >
+              Không có hợp đồng
+            </Text>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 };

@@ -47,7 +47,6 @@ const ChoiceRoleScreen = ({ navigation }) => {
           <RadioButton.Group
             onValueChange={(newValue) => {
               setRole(newValue);
-              console.log(newValue);
             }}
             value={role}
           >

@@ -11,7 +11,7 @@ import { Button } from "react-native-paper";
 import { useState } from "react";
 import ModalDetailContract from "../../component/modalDetailContract";
 import ModalReportProgess from "../../component/modalReportProgess";
-const ContractProgess = () => {
+const ContractProgess = ({contract}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
@@ -44,7 +44,7 @@ const ContractProgess = () => {
 
 
       <Modal animationType="slide" visible={modalVisible}>
-        <ModalDetailContract setmodalvisiable={setModalVisible} />
+        <ModalDetailContract setmodalvisiable={setModalVisible} contract={contract}/>
       </Modal>
     </View>
   );

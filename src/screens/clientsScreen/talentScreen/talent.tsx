@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -12,40 +12,62 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { TextInput } from "react-native-gesture-handler";
-import IconEntypo from "react-native-vector-icons/Entypo";
 import type { PickerItem } from "react-native-woodpicker";
-import { Picker } from "react-native-woodpicker";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { inviteFreelancerApi } from "../../../apis/job.api";
+import { TextInput } from "react-native-paper";
 import ModalLoading from "../../component/modalLoading";
+import { sendNoticationApi } from "../../../apis/noti.api";
+import { useNotification } from "../../../hook/hook";
+import { INotiParams } from "../../../apis/type.task.api";
+import { AuthContext } from "../../../utils/context";
 const Talent = ({ navigation, talent }) => {
   const queryClient = useQueryClient();
   const [modalVisible, setModalVisible] = useState(false);
   const [mail_invite, setMail_invite] = useState("");
-  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
-
+  const [title, setTitle] = useState("");
+  const { sendNotication } = useNotification();
   const inviteFreelancer = useMutation({
-    mutationFn: async () =>
-      await inviteFreelancerApi(
+    mutationKey: ["inviteFreelancer"],
+    mutationFn: () =>
+      inviteFreelancerApi(
         pickedData.value,
-        talent?.id,
+        talent["id"],
         mail_invite,
-        token
+        token,
+        title
       ),
-    onSuccess: () => {
-      alert("Mời ứng viên thành công");
-      setModalVisible(false);
+    onError: (err) => {
+      Alert.alert("Gửi lời mời thất bại", err["response"].data.data.title);
     },
-    onError: (error) => {
-      Alert.alert("Mời ứng viên thất bại", error["response"].data.data);
-      // console.log(error["response"].data);
+    onSuccess: (res) => {
+      const data: INotiParams = {
+        title: `Lời mời làm việc từ ${infoLogin["user"]?.username}`,
+        message: mail_invite,
+        smail: 1,
+        linkable: `/freelancer/job/${pickedData.value}`,
+        imagefile: null,
+        user_type: "freelancer",
+        user_id: talent["id"],
+      };
+      sendNotication
+        .mutateAsync(data)
+        .then(() => {
+          console.log("Gửi thông báo thành công");
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+        });
+      Alert.alert("Gửi lời mời thành công");
+      setModalVisible(false);
+      return res;
     },
   });
-  const handInvite = () => {
-    inviteFreelancer.mutate();
+  const handInvite = async () => {
+    await inviteFreelancer.mutateAsync();
   };
   const user = {
     fullname: talent.last_name + " " + talent.first_name,
@@ -59,7 +81,6 @@ const Talent = ({ navigation, talent }) => {
     label: item.title,
     value: item.id,
   }));
-  const listSkills = queryClient.getQueryData(["listSkills"]);
   return (
     <View style={styles.container}>
       <View style={styles.info}>
@@ -149,8 +170,17 @@ const Talent = ({ navigation, talent }) => {
                   setPickedData(item);
                 }}
               />
-              <Text style={styles.text}>Tin nhắn</Text>
               <TextInput
+                mode="outlined"
+                style={{ backgroundColor: "white", marginHorizontal: 10 }}
+                onChangeText={setTitle}
+                value={title}
+                multiline
+                label={"Tiêu đề"}
+              />
+              <TextInput
+                label={"Tin nhắn"}
+                mode="outlined"
                 multiline
                 numberOfLines={5}
                 style={styles.input}
@@ -165,16 +195,8 @@ const Talent = ({ navigation, talent }) => {
                   Gửi lời mời
                 </Text>
               </TouchableOpacity>
-              {inviteFreelancer.isPending && (
-                <View
-                  style={[StyleSheet.absoluteFill,{
-                    backgroundColor: "rgba(0,0,0,0.3)",
-                  }]}
-                >
-                  <ActivityIndicator size="large" color="#0000ff" />
-                </View>
-              )}
             </View>
+            <ModalLoading visible={inviteFreelancer.isPending} />
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -223,11 +245,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "black",
     marginHorizontal: 10,
     marginVertical: 10,
-    height: 300,
+    backgroundColor: "white",
   },
   dropdown: {
     borderColor: "black",

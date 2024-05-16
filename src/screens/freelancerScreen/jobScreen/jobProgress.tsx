@@ -4,24 +4,17 @@ import { Button } from "react-native-paper";
 import { useState } from "react";
 import ModalReportProgess from "../../component/modalReportProgess";
 import ModalDetailContract from "../../component/modalDetailContract";
-const JobProgress = () => {
+import { useQueryClient } from "@tanstack/react-query";
+const JobProgress = ({job}) => {
+  const contract = null
   const [modalVisibleProgess, setModalVisibleProgess] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <View style={styles.container}>
       <View>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Image
-            style={{ width: 50, height: 50, borderRadius: 20 }}
-            source={require("../../../assets/avatar_temp.jpg")}
-          />
-          <Text style={styles.text}>Tên Client</Text>
-        </View>
-        <Text style={styles.title}>Frontend</Text>
+        <Text style={styles.title}>{job?.title}</Text>
         <View>
-          <Text style={styles.text}>Ngân sách: 1000$</Text>
-          <Text style={styles.text}>Ngày hoàn thành: 20/07/2024</Text>
-          <Text style={styles.text}>Số task đã hoàn thành: 2/5</Text>
+          <Text style={styles.text}>Ngân sách: {job?.bids}</Text>
         </View>
       </View>
       <View style={styles.containerButton}>
@@ -40,10 +33,10 @@ const JobProgress = () => {
         </TouchableOpacity>
       </View>
       <Modal animationType="slide" visible={modalVisibleProgess}>
-        <ModalReportProgess setmodalvisiable={setModalVisibleProgess} typeUser={"client"} />
+        <ModalReportProgess setmodalvisiable={setModalVisibleProgess} jobId= {job.id}/>
       </Modal>
       <Modal animationType="slide" visible={modalVisible}>
-        <ModalDetailContract setmodalvisiable={setModalVisible} />
+        <ModalDetailContract setmodalvisiable={setModalVisible} contract={contract}/>
       </Modal>
     </View>
   );

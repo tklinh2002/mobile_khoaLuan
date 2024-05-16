@@ -11,13 +11,14 @@ import Header from '../screens/component/header';
 import ChoiceRoleScreen from '../screens/signUpScreen/choiceRoleScreen';
 import ConfirmOtp from '../screens/signUpScreen/cofirmOtp';
 import TestScreen from '../testscreen';
+import TaskScreen from '../screens/freelancerScreen/taskScreen/taskScreen';
 
 const Stack = createNativeStackNavigator();
 
 const Route = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Start"
+      initialRouteName="Test"
     >
       <Stack.Screen name="Start" component={StartScreen} options={{ headerShown: false, title: "" }} />
       <Stack.Screen name="Login" component={LoginScreen} options={{ title: ""}} />
@@ -32,6 +33,8 @@ const Route = () => {
       <Stack.Screen name="TabDetailJob" component={TabDetailJob} options={{ title: "", header: ()=><HeaderDetailJob/>}} />
       <Stack.Screen name="HomeFreelancer" component={RouteFreelancer} options={{ title: "", header:()=><Header/>}} />
       <Stack.Screen name="Test" component={TestScreen} options={{ title: "" }} />
+      <Stack.Screen name="Task" component={TaskScreen} options={{ title: "" }} />
+
     </Stack.Navigator>
   )
 }

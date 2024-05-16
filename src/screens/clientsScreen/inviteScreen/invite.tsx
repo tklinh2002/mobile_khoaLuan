@@ -1,7 +1,17 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
-const Invite = () => {
-  const i = 0;
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Modal,
+} from "react-native";
+import { formatTimePost } from "../../../utils/format";
+import ModalCreateContract from "../contractScreen/modalCreateContract";
+const Invite = ({ item }) => {
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const i = item.status;
   const status = {
     0: {
       color: "#FFA500",
@@ -16,20 +26,15 @@ const Invite = () => {
   return (
     <View style={styles.container}>
       <View style={styles.info}>
-        <Image
-          source={require("../../../assets/avatar_temp.jpg")}
-          style={{ width: 60, height: 60, borderRadius: 30, marginLeft: 10 }}
-        />
         <View style={{ marginLeft: 10 }}>
-          <Text style={{ fontSize: 20 }}>Nguyễn Văn A</Text>
-          <Text style={{ fontSize: 20, color: "green" }}>
-            Front-end Developer
+          <Text style={{ fontSize: 13, fontStyle: "italic", color: "blue" }}>
+            {formatTimePost(item?.updated_at)}
           </Text>
+          <Text style={{ fontSize: 20 }}>Username: {item.username}</Text>
         </View>
       </View>
       <View style={styles.containerFooter}>
-        <Text style={styles.text}>Đánh giá: 4/5</Text>
-        <Text style={styles.text}>Tổng thu nhập: 1ETH</Text>
+        <Text style={styles.text}>Email: {item.email}</Text>
       </View>
       <View style={styles.containerFooter}>
         <TouchableOpacity
@@ -40,9 +45,10 @@ const Invite = () => {
         >
           <Text style={{ fontSize: 16, color: "white" }}>{status[i].text}</Text>
         </TouchableOpacity>
-        {status[i].text === "Đã xác nhận" ? (
+        {item.status == 1 ? (
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "green" }]}
+            onPress={() => setModalVisible(true)}
           >
             <Text style={{ fontSize: 16, color: "white" }}>Taọ hợp đồng</Text>
           </TouchableOpacity>
@@ -51,6 +57,25 @@ const Invite = () => {
           <Text style={{ fontSize: 16, color: "white" }}>Thu hồi</Text>
         </TouchableOpacity>
       </View>
+      {/* cadidate:{
+  freelancer_id: number;
+  job_id: number;
+  username: string;
+  email: string;
+
+} */}
+      <Modal
+        animationType="slide"
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <ModalCreateContract
+          setmodalvisiable={setModalVisible}
+          candidate={item}
+        />
+      </Modal>
     </View>
   );
 };

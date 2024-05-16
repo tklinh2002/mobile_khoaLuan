@@ -7,15 +7,16 @@ import {
   Modal,
   TouchableWithoutFeedback,
 } from "react-native";
-import IconEntypo from "react-native-vector-icons/Entypo";
 import { useState } from "react";
-import { useQueries } from "@tanstack/react-query";
-import { TextInput } from "react-native-gesture-handler";
 import ModalDetailJob from "../../component/modalDetailJob";
-const Job = () => {
+import { formatDate } from "../../../utils/format";
+const Job = ({ job }) => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
-    <TouchableOpacity style={styles.container} onPress={()=>setModalVisible(true)}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => setModalVisible(true)}
+    >
       <Text
         style={{
           fontSize: 20,
@@ -24,7 +25,7 @@ const Job = () => {
           marginHorizontal: 10,
         }}
       >
-        Backend
+        {job?.title}
       </Text>
       <View style={{ marginLeft: 10, marginTop: 10 }}>
         <Text
@@ -34,22 +35,22 @@ const Job = () => {
             color: "gray",
           }}
         >
-          Ngày tạo: 27/02/2024
+          Thời hạn: {formatDate(job["deadline"])}
         </Text>
         <Text style={{ fontSize: 16, marginVertical: 10 }} numberOfLines={10}>
-          Mô tả công việc
+          Ngân sách: {job["bids"]}
         </Text>
       </View>
       <Modal
-          animationType='slide'
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <ModalDetailJob setModalVisible={setModalVisible}/>
-        </Modal>
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <ModalDetailJob setModalVisible={setModalVisible} job={undefined} />
+      </Modal>
     </TouchableOpacity>
   );
 };

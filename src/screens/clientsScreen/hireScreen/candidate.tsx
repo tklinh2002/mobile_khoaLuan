@@ -11,12 +11,16 @@ import ModalCreateContract from "../contractScreen/modalCreateContract";
 import { useState } from "react";
 import { formatDate, formatTimePost } from "../../../utils/format";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
+import { useQueryClient } from "@tanstack/react-query";
 const Candidate = ({ navigation, candidate }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDetailVisible, setModalDetailVisible] = useState(false);
   const handCreateContract = () => {
+    setModalDetailVisible(false);
     setModalVisible(true);
   };
+  const queryClient = useQueryClient();
+  
   return (
     <View style={styles.container}>
       <View style={styles.info}>
@@ -25,9 +29,6 @@ const Candidate = ({ navigation, candidate }) => {
             {formatTimePost(candidate?.updated_at)}
           </Text>
           <Text style={{ fontSize: 20 }}>{candidate?.username}</Text>
-          <Text style={{ fontSize: 20, color: "green" }}>
-            proposal: {candidate?.proposal}
-          </Text>
         </View>
       </View>
       <View style={styles.containerFooter}>
@@ -41,7 +42,7 @@ const Candidate = ({ navigation, candidate }) => {
           <Text style={{ fontSize: 16, color: "white" }}>Từ chối</Text>
         </TouchableOpacity>
       </View>
-      {/* modal contract */}
+      {/* modal create contract */}
       <Modal
         animationType="slide"
         visible={modalVisible}
@@ -50,41 +51,41 @@ const Candidate = ({ navigation, candidate }) => {
         }}
       >
         <ModalCreateContract
-          navigation={navigation}
           setmodalvisiable={setModalVisible}
+          candidate={candidate}
         />
       </Modal>
+
       {/* modal detail candidate */}
       <Modal
         visible={modalDetailVisible}
         animationType="slide"
         transparent={true}
-      > 
-        <View style={{ flex: 1, justifyContent: "center"}}>
+      >
+        <View style={{ flex: 1, justifyContent: "center" }}>
           <View
             style={{
               backgroundColor: "white",
-            
+
               borderRadius: 20,
               margin: 5,
               padding: 10,
-              borderColor:"black",
-              borderWidth:1
+              borderColor: "black",
+              borderWidth: 1,
             }}
           >
             <IconAntDesign
-                name="closecircle"
-                size={24}
-                color="gray"
-                onPress={() => setModalDetailVisible(false)}
-              />
+              name="closecircle"
+              size={24}
+              color="gray"
+              onPress={() => setModalDetailVisible(false)}
+            />
             <Text style={{ fontSize: 25, textAlign: "center", margin: 10 }}>
               Chi tiết ứng viên
             </Text>
             <View>
               <Text style={styles.text}>Username: {candidate?.username}</Text>
               <Text style={styles.text}>Email: {candidate?.email}</Text>
-              <Text style={styles.text}>Proposal: {candidate?.proposal}</Text>
               <Text style={styles.text}>
                 Ngày ứng tuyển: {formatDate(candidate?.updated_at)}
               </Text>

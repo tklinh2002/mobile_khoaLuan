@@ -41,15 +41,11 @@ export const updateInfoUserFApi = (token: string, infoUser: any) => {
   if(infoUser.avatar !== null){
     data.append("avatar", infoUser.avatar);
   }
-  
-  console.log("infoUser "+JSON.stringify(infoUser));
-  console.log("job  " + infoUser["skill"]);
-  infoUser["skill"].forEach((skill, index) => {
-    data.append(`skill[${index}][skill_id]`, skill.id.toString());
-    data.append(`skill[${index}][skill_name]`, skill.name);
-    data.append(`skill[${index}][point]`, 100 + "");
+  const skilltemp = []
+  infoUser["skill"].forEach((skill) => {
+    skilltemp.push(skill.id);
   });
-  console.log(data);
+  data.append("skill", skilltemp.toString());
 
   return http.httpform.post(`/api/v1/freelancer/info/update`, data, {
     headers: {

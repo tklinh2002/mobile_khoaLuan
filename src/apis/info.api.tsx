@@ -37,8 +37,19 @@ export const updateInfoUserApi = (infoUser: any, token: string) => {
   data.append("address", infoUser.address);
   data.append("introduce", infoUser.introduce);
   data.append("avatar", infoUser.avatar);
-  console.log(data);
   return http.httpform.post(`/api/v1/client/info/update`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const getDetailInfoApi = (
+  token: string,
+  userType: string,
+  user_id: string
+) => {
+  return http.httpjson.get(`/api/v1/info-user?id=${user_id}&typeUser=${userType}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

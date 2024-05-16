@@ -19,10 +19,22 @@ export const formatTimePost = (dateString) => {
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
   if(days > 0) {
-    return `Đăng ${days} ngày trước`;
+    return ` ${days} ngày trước`;
   }else if(hours > 0){
-    return `Đăng ${hours} giờ trước`;
+    return ` ${hours} giờ trước`;
   }else{
-    return `Đăng ${minutes} phút trước`;
+    return ` ${minutes} phút trước`;
   }
 };
+export const formatTimeMess = (dateString: string)=>{
+  const date = new Date(dateString);
+  
+  const formattedDate = `${date.getHours()}:${date.getMinutes()} ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  
+  return formattedDate
+  }
+
+export const formatTimeTask = (dateString: string)=>{
+  const date = dateString.split(' ')[0].split('-').reverse().join('-');
+  return date
+}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   Text,
@@ -18,9 +18,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getInfoUserFApi, updateInfoUserFApi } from "../../../apis/infoF.api";
 import * as ImagePicker from "expo-image-picker";
 import { getListSkill } from "../../../apis/auth.api";
+import { AuthContext } from "../../../utils/context";
 const ProfileScreen = () => {
   const queryClient = useQueryClient();
-  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
   const [modalVisible, setModalVisible] = useState(false);
   const [infoUser, setInfoUser] = useState() as any;
@@ -360,7 +361,7 @@ const ProfileScreen = () => {
                         onPress={() => {
                           const newSkill = [
                             ...skill,
-                            { id: item.id, name: item.name, point: 100 },
+                            { id: item.id, name: item.name },
                           ];
                           setSkill(newSkill);
                           setFilteredSuggestions(

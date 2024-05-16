@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TextInput,
-  Keyboard,
-  TouchableWithoutFeedback,
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
@@ -17,10 +15,11 @@ import Panigation from "../../component/pagination";
 import { useState } from "react";
 import { getListFreelancerApi } from "../../../apis/info.api";
 import { getListMyPostApi } from "../../../apis/job.api";
+import { AuthContext } from "../../../utils/context";
 const TalentScreen = ({ navigation }) => {
   const [page, setpage] = useState(1);
   const queryClient = useQueryClient();
-  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
   const listFreelancer = useQuery({
     queryKey: ["listFreelancer", page],

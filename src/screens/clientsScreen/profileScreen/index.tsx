@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -15,9 +15,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getInfoUserApi, updateInfoUserApi } from "../../../apis/info.api";
 import { Avatar, Button, TextInput } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
+import { AuthContext } from "../../../utils/context";
 const ProfileScreen = ({ navigation }) => {
   const queryClient = useQueryClient();
-  const infoLogin = queryClient.getQueryData(["infoLogin"]);
+  const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
   const [modalVisible, setModalVisible] = useState(false);
   const [infoUser, setInfoUser] = useState() as any;
@@ -65,8 +66,8 @@ const ProfileScreen = ({ navigation }) => {
     mutationFn: () => updateInfoUserApi(infoUser, token),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["getInfoUserApi"] });
-      Alert.alert("Thông báo","Cập nhật thành công");
-      
+      Alert.alert("Thông báo", "Cập nhật thành công");
+
       await setModalVisible(false);
     },
     onError: (error) => {
@@ -74,7 +75,6 @@ const ProfileScreen = ({ navigation }) => {
     },
   });
   const handedit = () => {
- 
     updateInfoUser.mutate();
   };
   if (getInfoUser.isLoading) {

@@ -10,7 +10,6 @@ import {
 import Skill from "../../freelancerScreen/findJobScreen/skill";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "../../../utils/format";
-import { getJobApi } from "../../../apis/job.api";
 import { useRoute } from "@react-navigation/native";
 
 const DetailJob = () => {
@@ -18,7 +17,6 @@ const DetailJob = () => {
   const id = route.params["id"];
   const queryClient = useQueryClient();
   const job = queryClient.getQueryData(["job", id]);
-
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>{job["title"]}</Text>

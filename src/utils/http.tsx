@@ -8,9 +8,9 @@ class Http {
       Http.instance = axios.create({
         baseURL: "https://timviecits.id.vn",
         timeout: 25000,
-        headers:{
-          "Content-Type":"multipart/form-data",
-        }
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
     }
     return Http.instance;
@@ -27,9 +27,9 @@ class Http2 {
       Http2.instance = axios.create({
         baseURL: "https://timviecits.id.vn",
         timeout: 20000,
-        headers:{
-          "Content-Type":"application/json",
-        }
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
     }
     return Http2.instance;
@@ -38,4 +38,4 @@ class Http2 {
 
 const httpjson = Http2.getInstance();
 
-export default { httpform, httpjson};
+export default { httpform, httpjson };

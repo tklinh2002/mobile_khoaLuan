@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { useEffect, useState } from "react";
-import DatePicker from "react-native-date-picker";
 import { TextInput } from "react-native-paper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { registerAuth } from "../../apis/auth.api";
@@ -27,7 +26,6 @@ const SignUpScreen = ({ navigation }) => {
   const register = useMutation({
     mutationFn: (_) => registerAuth(data),
     onSuccess: (data) => {
-      console.log(data);
       Alert.alert(
         "Đăng ký thành công",
         "Vui lòng kiểm tra email để xác nhận tài khoản",
