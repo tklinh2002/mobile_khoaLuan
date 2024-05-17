@@ -21,10 +21,11 @@ const TalentScreen = ({ navigation }) => {
   const queryClient = useQueryClient();
   const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
+  const [keyWord, setKeyWord] = useState("");
   const listFreelancer = useQuery({
     queryKey: ["listFreelancer", page],
     queryFn: async () =>
-      getListFreelancerApi(page, 10, "", "", "", token).then(
+      getListFreelancerApi(page, 10, keyWord, "", "", token).then(
         (res) => res.data.data
       ),
   });
@@ -35,14 +36,19 @@ const TalentScreen = ({ navigation }) => {
         queryClient.setQueryData(["listpost"], res.data.data);
         return res.data.data;
       }),
-  }); 
+  });
   return (
     <View style={styles.container}>
       <ScrollView>
         <Text style={styles.title}>Tìm Ứng Viên</Text>
         <View style={styles.inputContainer}>
-          <TextInput style={styles.input} placeholder="Nhập ....." />
-          <TouchableOpacity style={styles.buttonSeacrh}>
+          <TextInput
+            style={styles.input}
+            placeholder="Nhập ....."
+            value={keyWord}
+            onChangeText={(t) => setKeyWord(t)}
+          />
+          <TouchableOpacity style={styles.buttonSeacrh} onPress={()=>listFreelancer.refetch()}>
             <IconEntypo name="magnifying-glass" size={30} color="white" />
           </TouchableOpacity>
         </View>
@@ -54,7 +60,7 @@ const TalentScreen = ({ navigation }) => {
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
         ) : (
-          // Render data if none is loading 
+          // Render data if none is loading
           listFreelancer.data?.data.map((item) => (
             <Talent
               key={item["username"]}
@@ -63,7 +69,7 @@ const TalentScreen = ({ navigation }) => {
             />
           ))
         )}
-      <Panigation setpage={setpage} length={listPost?.data?.total} />
+        <Panigation setpage={setpage} length={listPost?.data?.total} />
       </ScrollView>
     </View>
   );

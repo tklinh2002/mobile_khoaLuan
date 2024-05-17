@@ -10,7 +10,6 @@ import { WagmiConfig } from "wagmi";
 import { sepolia } from "viem/chains";
 import { AuthProvider } from "./src/utils/context";
 
-
 const projectId = "3064cb3b58975b8c8cd65e22a07d3ad0";
 const metadata = {
   name: "Web3Modal RN",
@@ -39,15 +38,15 @@ export default function App() {
     },
   });
   return (
-    <QueryClientProvider client={queryClient}>
-      <WagmiConfig config={wagmiConfig}>
-        <AuthProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <WagmiConfig config={wagmiConfig}>
           <NavigationContainer>
             <Route />
             {/* <TestScreen navigation={navigator}/> */}
           </NavigationContainer>
-        </AuthProvider>
-      </WagmiConfig>
-    </QueryClientProvider>
+        </WagmiConfig>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }

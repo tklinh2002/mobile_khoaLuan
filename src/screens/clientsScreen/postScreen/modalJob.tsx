@@ -13,7 +13,7 @@ import {
   Button,
   ActivityIndicator,
   ScrollView,
-  Alert
+  Alert,
 } from "react-native";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { useState } from "react";
@@ -52,7 +52,7 @@ const ModalJob = ({ setModalVisible }) => {
         type: "*/*",
         copyToCacheDirectory: false,
       });
-      
+
       if (!result.canceled) {
         // try {
         //   const base64 = await FileSystem.readAsStringAsync(
@@ -62,15 +62,15 @@ const ModalJob = ({ setModalVisible }) => {
         //     }
         //   );
 
-          setDocument(result.assets[0].name);
-          setJob((prevJob) => ({
-            ...prevJob,
-            content_file: {
-              name: result.assets[0].name,
-              type: result.assets[0].mimeType,
-              uri: result.assets[0].uri
-            },
-          }));
+        setDocument(result.assets[0].name);
+        setJob((prevJob) => ({
+          ...prevJob,
+          content_file: {
+            name: result.assets[0].name,
+            type: result.assets[0].mimeType,
+            uri: result.assets[0].uri,
+          },
+        }));
         // } catch (error) {
         //   console.error("Error converting file to base64:", error);
         // }
@@ -108,7 +108,6 @@ const ModalJob = ({ setModalVisible }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [skill, setSkill] = useState([]);
-  
 
   const onChangeTextSkill = (text) => {
     setSearchQuery(text);
@@ -140,21 +139,60 @@ const ModalJob = ({ setModalVisible }) => {
       setJob({ ...job, deadline: adjustedDate });
     }
   };
-const createJob = useMutation({
-  mutationFn: async (job: Job) => await createJobApi(job, token),
-  onSuccess: (data) => {
-    alert("Tạo job thành công");
-    queryClient.invalidateQueries({ queryKey: ["listpostopen"] });
-    setModalVisible(false);
-  },
+  const createJob = useMutation({
+    mutationFn: async (job: Job) => await createJobApi(job, token),
+    onSuccess: (data) => {
+      alert("Tạo job thành công");
+      queryClient.invalidateQueries({ queryKey: ["listpostopen"] });
+      setModalVisible(false);
+    },
 
-  onError: (error) => {
-  Alert.alert("Error", error["response"].data.data);  
-  },
-})
-  
+    onError: (error) => {
+      Alert.alert("Error", error["response"].data.data);
+    },
+  });
+
   const handCreateJob = async () => {
-    createJob.mutate(job);  
+    if (job.title === "") {
+      alert("Tiêu đề không được để trống");
+      return;
+    }
+    if (job.desc === "") {
+      alert("Mô tả không được để trống");
+      return;
+    }
+    if (job.content === "") {
+      alert("Nội dung không được để trống");
+      return;
+    }
+    if (job.bids === 0) {
+      alert("Lương không được để trống");
+      return;
+    }
+    const currentDate = new Date();
+
+    const deadlineDate = new Date(job.deadline);
+
+    const timeDiff = deadlineDate.getTime() - currentDate.getTime();
+
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    if (daysDiff < 5) {
+      alert("Ngày deadline gần hơn hiện tại 5 ngày");
+      return;
+    }
+    if (job.skill.length === 0) {
+      alert("Kỹ năng không được để trống");
+      return;
+    }
+    if (job.thumbnail === "") {
+      alert("Thumbnail không được để trống");
+      return;
+    }
+    if (job.content_file === undefined) {
+      alert("File mô tả không được để trống");
+      return;
+    }
+    createJob.mutate(job);
   };
 
   return (
@@ -168,18 +206,18 @@ const createJob = useMutation({
           onPress={Keyboard.dismiss}
         >
           <View style={{ marginTop: "10%" }}>
-          {createJob.isPending && (
-        <View
-          style={{
-            ...StyleSheet.absoluteFillObject, // Đặt spinner ở vị trí tuyệt đối
-            backgroundColor: "rgba(0, 0, 0, 0.5)", // Một lớp phủ mờ
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      )}
+            {createJob.isPending && (
+              <View
+                style={{
+                  ...StyleSheet.absoluteFillObject, // Đặt spinner ở vị trí tuyệt đối
+                  backgroundColor: "rgba(0, 0, 0, 0.5)", // Một lớp phủ mờ
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
+            )}
             <View style={styles.header}>
               <IconAntDesign
                 name="closecircle"

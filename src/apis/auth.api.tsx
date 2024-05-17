@@ -35,3 +35,18 @@ export const getListSkill = (token) =>
       search: "",
     },
   });
+  export const getImage = (uri, type, mime)=>{
+    const blob = {
+      uri: uri,
+      type: type,
+      name: mime,
+    } as any;
+    const formData = new FormData();
+    formData.append("sign", blob);
+    return http.httpform.post("/api/v1/upload-file",formData,{
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+
+    })
+  }

@@ -85,7 +85,11 @@ const LoginScreen = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={handPressLogin}>
-          <Text style={{ fontSize: 20, color: "white" }}>Đăng nhập</Text>
+          {loginMutation.isPending ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <Text style={{ fontSize: 20, color: "white" }}>Đăng nhập</Text>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -103,7 +107,7 @@ const LoginScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
         {/* <ModalLoading visible={loginMutation.isPending} /> */}
-        <Modal visible={loginMutation.isPending} animationType="slide" transparent={true}>
+        {/* <Modal visible={loginMutation.isPending} animationType="slide" transparent={true}>
           <View
             style={{
               flex: 1,
@@ -114,7 +118,7 @@ const LoginScreen = ({ navigation }) => {
           >
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
-        </Modal>
+        </Modal> */}
       </View>
     </TouchableWithoutFeedback>
   );

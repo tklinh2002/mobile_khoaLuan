@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { decode } from "base64-arraybuffer";
-import { Buffer } from "buffer";
 export default function TestScreen({ navigation }) {
   // const [modalVisibleProgess, setModalVisibleProgess] = useState(false);
   // const {sendOtp} = useOTP();
@@ -70,6 +69,8 @@ export default function TestScreen({ navigation }) {
       );
       return;
     }
+
+    // Mở trình chọn ảnh
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -90,6 +91,7 @@ export default function TestScreen({ navigation }) {
         type: image.mimeType,
         name: image.fileName,
       } as any;
+      console.log(blob);
       const formData = new FormData();
       formData.append("sign", blob);
       const response = await fetch(
@@ -101,16 +103,11 @@ export default function TestScreen({ navigation }) {
             "Content-Type": "multipart/form-data",
           },
         }
-      )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      );
+      const text = await response.text();
+      console.log(text);
     } catch (error) {
       console.log(error);
-      return false;
     }
   };
   return (

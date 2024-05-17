@@ -16,25 +16,50 @@ import {
 import { useContext, useEffect, useState } from "react";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { useDetailContract, useOTP } from "../../../hook/hook";
-import { Button, Checkbox } from "react-native-paper";
+import { Button, Checkbox, TextInput } from "react-native-paper";
 import SignatureBox from "../../component/signatureBox";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getDetailInfoApi } from "../../../apis/info.api";
 import ModalDetailJob from "../../component/modalDetailJob";
-import { useContractWrite } from "wagmi";
+import { useAccount, useContractWrite } from "wagmi";
 import { abi } from "../../../../abi";
 import ModalLoading from "../../component/modalLoading";
 import { AuthContext } from "../../../utils/context";
+import ModalPolicy from "../../component/modalPolici";
 
 const ModalDetailSign = ({ setmodalvisiable, contract }) => {
   const [checked, setChecked] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [signature, setSignature] = useState("");
+  const { isConnected } = useAccount();
   const { getJobInfoByCurrentJobId } = useDetailContract(contract?.jobIdcurent);
   const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
   const { confirmAfterFreelancerSignaContract } = useOTP();
+  const TIME_OUT = 300; //second
+  const [modalOtp, setModalOtp] = useState(false);
   const [otp, setOtp] = useState("");
+  const [countdown, setCountdown] = useState(TIME_OUT); // 5 minutes in seconds
+  const [isTimerRunning, setIsTimerRunning] = useState(true);
+  const { sendOtp, verifyOtp } = useOTP();
+  const [modalPolicy, setModalPolicy] = useState(false);
+  useEffect(() => {
+    let interval;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setCountdown((countdown) => {
+          if (countdown > 0) {
+            return countdown - 1;
+          } else {
+            setIsTimerRunning(false);
+            return 0;
+          }
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [isTimerRunning]);
   // console.log("contract", contract);
   const clientRes = useQuery({
     queryKey: ["client", getJobInfoByCurrentJobId.data?.client_id + ""],
@@ -63,10 +88,6 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
     args: [contract?.jobIdcurent, signature],
   } as any);
   const handleCreateContract = async () => {
-    if (signature == "") {
-      Alert.alert("Vui lòng ký tên");
-      return;
-    }
     confirmAfterFreelancerSignaContract
       .mutateAsync(contract?.jobIdcurent)
       .then((res) => {
@@ -82,6 +103,59 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
       })
       .catch((err) => {
         console.log(err);
+      });
+  };
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  };
+
+  const resendOTP = () => {
+    sendOtp
+      .mutateAsync()
+      .then((res) => {
+        setCountdown(TIME_OUT);
+        setIsTimerRunning(true);
+      })
+      .catch((err) => {
+        Alert.alert("Gửi mã OTP thất bại");
+      });
+  };
+  const handleSendOtp = async () => {
+    if (!isConnected) {
+      alert("Kết nối ví trước khi tạo hợp đồng");
+      return;
+    }
+    if (signature == "") {
+      alert("Vui lòng ký tên trước khi tạo hợp đồng");
+      return;
+    }
+
+    const res = await sendOtp
+      .mutateAsync()
+      .then((res) => {
+        console.log("send otp success");
+        setModalOtp(true);
+        setCountdown(TIME_OUT);
+        setIsTimerRunning(true);
+      })
+      .catch((err) => {
+        Alert.alert("Gửi mã OTP thất bại");
+        console.log(err);
+      });
+  };
+  const handleVerifyOtp = async () => {
+    verifyOtp
+      .mutateAsync(otp)
+      .then((res) => {
+        handleCreateContract();
+        setModalOtp(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        Alert.alert("Xác nhận OTP thất bại");
       });
   };
   return (
@@ -176,6 +250,15 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
               <ScrollView>
                 <View style={styles.info}>
                   <Text>Điều khoản hợp đồng:</Text>
+                  <TouchableOpacity onPress={() => setModalPolicy(true)}>
+                    <Text style={{ color: "blue", marginLeft: 10 }}>
+                      điều khoản
+                    </Text>
+                  </TouchableOpacity>
+                  <ModalPolicy
+                    visible={modalPolicy}
+                    onClose={() => setModalPolicy(false)}
+                  />
                 </View>
                 <View style={{ alignItems: "center", flexDirection: "row" }}>
                   <View style={{ borderWidth: 1 }}>
@@ -195,7 +278,7 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
               <Text style={styles.textInfo}>Chữ ký của client:</Text>
               <Image
                 source={{
-                  uri: `${getJobInfoByCurrentJobId.data?.signature_client}`,
+                  uri: `https://my-final.s3.ap-southeast-1.amazonaws.com/my-final/${getJobInfoByCurrentJobId.data?.signature_client}`,
                 }}
                 style={{ width: 150, height: 150, alignSelf: "center" }}
                 resizeMode="contain"
@@ -203,7 +286,9 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
               <Text style={styles.textInfo}>Chữ ký của freelancer:</Text>
               {signature != "" ? (
                 <Image
-                  source={{ uri: `${signature}` }}
+                  source={{
+                    uri: `https://my-final.s3.ap-southeast-1.amazonaws.com/my-final/${signature}`,
+                  }}
                   style={{ width: 150, height: 150, alignSelf: "center" }}
                   resizeMode="contain"
                 />
@@ -238,8 +323,8 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
                       margin: 10,
                     }}
                   >
-                    <Button mode="contained" onPress={handleCreateContract}>
-                      Tạo hợp đồng
+                    <Button mode="contained" onPress={handleSendOtp}>
+                      Ký hợp đồng
                     </Button>
                   </View>
                 </>
@@ -275,6 +360,77 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
               acceptContract.isLoading
             }
           />
+          {/* modal otp */}
+          <Modal visible={modalOtp} transparent={true}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={{ margin: 5, fontSize: 15 }}>
+                  Vui lòng nhập mã OTP ở mail để xác nhận chữ ký
+                </Text>
+                <TextInput
+                  mode="outlined"
+                  keyboardType="number-pad"
+                  maxLength={6}
+                  label={"Nhập OTP"}
+                  style={{ width: 200, textAlign: "center", margin: 10 }}
+                  onChangeText={setOtp}
+                />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                    width: 200,
+                    marginBottom: 20,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      color: isTimerRunning ? "black" : "red",
+                    }}
+                  >
+                    {formatTime(countdown)}
+                  </Text>
+                  <TouchableOpacity onPress={resendOTP}>
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        fontWeight: "600",
+                        color: "blue",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      Gửi lại
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <Button
+                    style={{ backgroundColor: "green", marginRight: 10 }}
+                    mode="contained"
+                    onPress={handleVerifyOtp}
+                  >
+                    Xác nhận otp
+                  </Button>
+                  <Button
+                    style={{ backgroundColor: "red", marginRight: 10 }}
+                    mode="contained"
+                    onPress={() => setModalOtp(false)}
+                  >
+                    Hủy
+                  </Button>
+                </View>
+                <ModalLoading visible={verifyOtp.isPending} />
+              </View>
+            </View>
+          </Modal>
+          {/* modal loading */}
+          <ModalLoading visible={sendOtp.isPending} />
         </View>
       </TouchableNativeFeedback>
     </ScrollView>
@@ -344,6 +500,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginHorizontal: 10,
     marginVertical: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
   },
 });
 export default ModalDetailSign;

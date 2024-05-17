@@ -28,7 +28,9 @@ const Talent = ({ navigation, talent }) => {
   const [mail_invite, setMail_invite] = useState("");
   const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(
+    `Lời mời làm việc từ ${infoLogin["user"]?.username}`
+  );
   const { sendNotication } = useNotification();
   const inviteFreelancer = useMutation({
     mutationKey: ["inviteFreelancer"],
@@ -67,6 +69,15 @@ const Talent = ({ navigation, talent }) => {
     },
   });
   const handInvite = async () => {
+    if (!pickedData) {
+      Alert.alert("Chưa chọn bài đăng");
+      return;
+    }
+    if (mail_invite === "") {
+      Alert.alert("Chưa nhập tin nhắn");
+      return;
+    }
+
     await inviteFreelancer.mutateAsync();
   };
   const user = {
@@ -169,14 +180,6 @@ const Talent = ({ navigation, talent }) => {
                 onChange={(item) => {
                   setPickedData(item);
                 }}
-              />
-              <TextInput
-                mode="outlined"
-                style={{ backgroundColor: "white", marginHorizontal: 10 }}
-                onChangeText={setTitle}
-                value={title}
-                multiline
-                label={"Tiêu đề"}
               />
               <TextInput
                 label={"Tin nhắn"}

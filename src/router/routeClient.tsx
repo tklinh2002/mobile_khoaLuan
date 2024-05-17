@@ -14,7 +14,7 @@ const Drawer = createDrawerNavigator();
 const RouteClient = () => {
   return (
     <Drawer.Navigator
-      initialRouteName="Contract"
+      initialRouteName="Talent"
       screenOptions={{
         drawerActiveTintColor: '#e91e63',
         drawerLabelStyle: {
@@ -63,7 +63,7 @@ const RouteClient = () => {
           headerShown: false
         }}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="Job"
         component={JobScreen}
         options={{
@@ -74,7 +74,7 @@ const RouteClient = () => {
           title: "",
           headerShown: false
         }}
-      />
+      /> */}
       <Drawer.Screen
         name="Contract"
         component={ContractScreen}
