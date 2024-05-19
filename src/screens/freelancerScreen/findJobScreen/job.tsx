@@ -7,6 +7,7 @@ import { useState } from "react";
 import ModalApplyJob from "./modalApplyJob";
 import { formatDate, formatTimePost } from "../../../utils/format";
 import { useQueryClient } from "@tanstack/react-query";
+import ModalDetailJobF from "./modalDetailJobF";
 const Job = ({ job }) => {
   // console.log("job", job);
   const [modalVisible, setModalVisible] = useState(false);
@@ -49,7 +50,7 @@ const Job = ({ job }) => {
       </TouchableOpacity>
       {/* modal chi tiết */}
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <ModalDetailJob setModalVisible={setModalVisible} job={job} />
+        <ModalDetailJobF setModalVisible={setModalVisible} job={job} />
       </Modal>
       {/* modal ứng tuyển */}
       <Modal

@@ -12,7 +12,7 @@ const ContractSignScreen = () => {
   if (getContractsByFreelancerId.isLoading) {
     return <Text>Loading...</Text>;
   }
-  const contracts = getContractsByFreelancerId.data.filter(
+  const contracts = getContractsByFreelancerId?.data.filter(
     (contract: any) => contract && contract.status == 0
   );
   // console.log(contracts);  

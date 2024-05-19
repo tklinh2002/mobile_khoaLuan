@@ -61,7 +61,7 @@ const LoginScreen = ({ navigation }) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View style={{ alignItems: "center" }}>
-          <Text style={styles.text}>FreelanceVN</Text>
+          <Text style={styles.text}>ITWork</Text>
         </View>
 
         <TextInput

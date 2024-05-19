@@ -35,11 +35,11 @@ const ChoiceRoleScreen = ({ navigation }) => {
       </View>
       <ScrollView style={{ flex: 1, width: "100%" }}>
         <View style={{ alignItems: "center" }}>
-          <Text style={styles.title}>FreelanceVN</Text>
+          <Text style={styles.title}>ITWork</Text>
         </View>
         <View style={{ alignItems: "center" }}>
           <Text style={{ fontSize: 25, fontWeight: "bold", marginTop: 20 }}>
-            Chọn vai trò
+            Bạn là người đang tìm việc hay bạn là nhà tuyển dụng ?
           </Text>
         </View>
         {/* button radio */}
@@ -56,7 +56,10 @@ const ChoiceRoleScreen = ({ navigation }) => {
               </View>
               <View style={{ marginLeft: 10 }}>
                 <Text style={styles.text}>Client</Text>
-                <Text> Tìm kiếm freelancer và tạo bài đăng</Text>
+                <Text>
+                  {" "}
+                  Tôi là nhà tuyển dụng đang tìm người thực hiện project
+                </Text>
               </View>
             </View>
             <View style={styles.containerRadio}>
@@ -65,7 +68,10 @@ const ChoiceRoleScreen = ({ navigation }) => {
               </View>
               <View style={{ marginLeft: 10 }}>
                 <Text style={styles.text}>Freelancer</Text>
-                <Text> Tìm kiếm công việc</Text>
+                <Text>
+                  {" "}
+                  Tôi là freelancer, tôi tìm kiếm công việc cho bản thân
+                </Text>
               </View>
             </View>
           </RadioButton.Group>

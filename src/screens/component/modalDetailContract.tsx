@@ -22,8 +22,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../utils/context";
 
 const ModalDetailContract = ({ setmodalvisiable, contract }) => {
-  
-  const { getContractDetailByIndex } = useContract({ contract_id: contract?.id });
+  const { getContractDetailByIndex } = useContract({
+    contract_id: contract?.id,
+  });
+  console.log("contract?", contract?.id);
+  console.log("contract?", contract);
+  console.log("getContractDetailByIndex", getContractDetailByIndex.data);
   const queryClient = useQueryClient();
   const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
@@ -47,7 +51,7 @@ const ModalDetailContract = ({ setmodalvisiable, contract }) => {
       ),
     enabled: !getContractDetailByIndex.isLoading,
   });
-  const i = getContractDetailByIndex.data?.status;
+  const i = contract?.status;
   const status = {
     0: {
       text: "Freelancer chưa ký",
@@ -153,7 +157,7 @@ const ModalDetailContract = ({ setmodalvisiable, contract }) => {
               {getContractDetailByIndex.data.signatureFreelancer != "" ? (
                 <Image
                   source={{
-                    uri: `${getContractDetailByIndex.data.signatureFreelancer}`,
+                    uri: `https://my-final.s3.ap-southeast-1.amazonaws.com/my-final/${getContractDetailByIndex.data.signatureFreelancer}`,
                   }}
                   style={{ width: 150, height: 150, alignSelf: "center" }}
                   resizeMode="contain"
@@ -167,7 +171,7 @@ const ModalDetailContract = ({ setmodalvisiable, contract }) => {
               {getContractDetailByIndex.data.signatureClient != "" ? (
                 <Image
                   source={{
-                    uri: `${getContractDetailByIndex.data.signatureClient}`,
+                    uri: `https://my-final.s3.ap-southeast-1.amazonaws.com/my-final/${getContractDetailByIndex.data.signatureClient}`,
                   }}
                   style={{ width: 150, height: 150, alignSelf: "center" }}
                   resizeMode="contain"

@@ -66,7 +66,7 @@ const SignUpScreen = ({ navigation }) => {
           </View>
 
           <View style={{ alignItems: "center" }}>
-            <Text style={styles.text}>FreelanceVN</Text>
+            <Text style={styles.text}>ITWork</Text>
           </View>
           <View style={{ alignItems: "center" }}>
             <Text style={{ fontSize: 25, fontWeight: "bold", marginTop: 20 }}>
@@ -121,7 +121,7 @@ const SignUpScreen = ({ navigation }) => {
               value={data.password}
               onChangeText={(password) => setData({ ...data, password })}
             />
-            <TextInput
+            {/* <TextInput
               keyboardType="numeric"
               style={styles.input}
               mode="outlined"
@@ -144,7 +144,7 @@ const SignUpScreen = ({ navigation }) => {
                 value={data.company}
                 onChangeText={(company) => setData({ ...data, company })}
               />
-            ) : null}
+            ) : null} */}
           </View>
 
           {/* button dang ky */}

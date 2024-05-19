@@ -19,13 +19,16 @@ import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { Button, Checkbox } from "react-native-paper";
 import TaskDetailModal from "./modalDetailTask";
 import AddTaskModal from "./addTaskModal";
-import { useTask } from "../../hook/hook";
+import { useContract, useDetailContract, useTask } from "../../hook/hook";
 import { useQueryClient } from "@tanstack/react-query";
 import { CreateJobTaskRequest } from "../../apis/type.task.api";
 import ModalLoading from "./modalLoading";
 import EditTaskModal from "./editTaskModal";
 import { AuthContext } from "../../utils/context";
+import { useContractWrite } from "wagmi";
+import { abi } from "../../../abi";
 const ModalReportProgess = ({ setmodalvisiable, jobId }) => {
+  const { getJobInfoByCurrentJobId } = useDetailContract(jobId);
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectTaskUpdate, setSelectTaskUpdate] = useState(null);
   const [modalAddTask, setModalAddTask] = useState(false);
@@ -35,6 +38,15 @@ const ModalReportProgess = ({ setmodalvisiable, jobId }) => {
   const { getTasks, createTask, updateTask, deleteTask } = useTask(jobId);
   const queryClient = useQueryClient();
   const { infoLogin, login, logout } = useContext(AuthContext);
+  const { finalizeContract, rejectCompletion, reportCompletion } = useContract({
+    contract_id: getJobInfoByCurrentJobId?.data?.contract_id + "",
+  });
+  const cancelContract = useContractWrite({
+    abi,
+    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+    functionName: "cancelContract",
+    args: [getJobInfoByCurrentJobId?.data?.contract_id + "", "Hủy hợp đồng"],
+  } as any);
   const handleAddTask = async (task: CreateJobTaskRequest) => {
     task.id = jobId;
     await createTask
@@ -93,6 +105,40 @@ const ModalReportProgess = ({ setmodalvisiable, jobId }) => {
       },
     ]);
   };
+  const handleRejectCompletion = async () => {
+    await rejectCompletion
+      .writeAsync()
+      .then(async () => {
+        await getJobInfoByCurrentJobId.refetch();
+        Alert.alert("Thông báo", "Từ chối hoàn thành hợp đồng thành công");
+      })
+      .catch((err) => {
+        Alert.alert("Lỗi", "Từ chối hoàn thành hợp đồng thất bại");
+      });
+  };
+  const handleFinalizeContract = async () => {
+    await finalizeContract
+      .writeAsync()
+      .then(async () => {
+        await getJobInfoByCurrentJobId.refetch();
+        Alert.alert("Thông báo", "Xác nhận hoàn thành hợp đồng thành công");
+      })
+      .catch((err) => {
+        Alert.alert("Lỗi", "Xác nhận hoàn thành hợp đồng thất bại");
+      });
+  };
+  const handleReportCompletion = async () => {
+    await reportCompletion
+      .writeAsync()
+      .then(async () => {
+        await getJobInfoByCurrentJobId.refetch();
+        Alert.alert("Thông báo", "Báo cáo hoàn thành hợp đồng thành công");
+      })
+      .catch((err) => {
+        Alert.alert("Lỗi", "Báo cáo hoàn thành hợp đồng thất bại");
+      });
+  };
+
   return (
     <ScrollView>
       <TouchableNativeFeedback
@@ -119,12 +165,45 @@ const ModalReportProgess = ({ setmodalvisiable, jobId }) => {
           <View
             style={{ flexDirection: "row", justifyContent: "space-around" }}
           >
-            <TouchableOpacity onPress={() => setModalAddTask(true)}>
-              <Button mode="outlined">
-                <Text>Thêm task </Text>
-              </Button>
-            </TouchableOpacity>
+            {getJobInfoByCurrentJobId?.data.status == 4 ||
+            getJobInfoByCurrentJobId?.data.status == 5 ? null : (
+              <TouchableOpacity onPress={() => setModalAddTask(true)}>
+                <Button mode="outlined">
+                  <Text>Thêm task </Text>
+                </Button>
+              </TouchableOpacity>
+            )}
           </View>
+          {infoLogin["user_type"] == "client" &&
+          getJobInfoByCurrentJobId?.data.status == 2 ? (
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-around" }}
+            >
+              <TouchableOpacity onPress={handleFinalizeContract}>
+                <Button mode="outlined">
+                  <Text>Xác nhận hoàn thành </Text>
+                </Button>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleRejectCompletion}>
+                <Button mode="outlined">
+                  <Text>Từ chối hoàn thành </Text>
+                </Button>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+          {infoLogin["user_type"] == "freelancer" &&
+          getJobInfoByCurrentJobId?.data.status == 1 ? (
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-around" }}
+            >
+              <TouchableOpacity onPress={handleReportCompletion}>
+                <Button mode="outlined">
+                  <Text>Báo cáo hoàn thành </Text>
+                </Button>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+
           <Text style={styles.textInfo}>Danh sách công việc:</Text>
           {getTasks.isLoading ? (
             <View style={styles.container}>
@@ -280,6 +359,10 @@ const ModalReportProgess = ({ setmodalvisiable, jobId }) => {
       <ModalLoading visible={createTask.isPending} />
       <ModalLoading visible={updateTask.isPending} />
       <ModalLoading visible={deleteTask.isPending} />
+      <ModalLoading visible={getJobInfoByCurrentJobId.isLoading} />
+      <ModalLoading visible={rejectCompletion.isLoading} />
+      <ModalLoading visible={finalizeContract.isLoading} />
+      <ModalLoading visible={reportCompletion.isLoading} />
     </ScrollView>
   );
 };

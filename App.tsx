@@ -28,15 +28,15 @@ createWeb3Modal({
   chains,
   wagmiConfig,
 });
-
-export default function App() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: Infinity,
-      },
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+      gcTime: Infinity,
     },
-  });
+  },
+});
+export default function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>

@@ -308,6 +308,7 @@ const ModalJob = ({ setModalVisible }) => {
                   <Image
                     source={{ uri: `data:image/jpeg;base64,${image.base64}` }}
                     style={{ width: image.width / 3, height: image.height / 3 }}
+                    resizeMode="contain"
                   />
                 )}
               </View>
@@ -392,11 +393,6 @@ const ModalJob = ({ setModalVisible }) => {
                   onPress={handCreateJob}
                 >
                   <Text style={{ color: "white", fontSize: 20 }}>Tạo job</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: "#0866FF" }]}
-                >
-                  <Text style={{ color: "white", fontSize: 20 }}>Đăng job</Text>
                 </TouchableOpacity>
               </View>
             </View>

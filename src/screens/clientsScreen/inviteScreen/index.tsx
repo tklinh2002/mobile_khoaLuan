@@ -7,8 +7,8 @@ const InviteScreen = () => {
     const route = useRoute();
     const id = route.params["id"];
     const queryClient = useQueryClient();
-    const job = queryClient.getQueryData(["job", id]);
-    const list_invite = [...(job["list_invite"] as any)] || [];
+    const job = queryClient.getQueryData(["job", id]) as any;
+    const list_invite = [...(job?.list_invite as any)] || [];
     return (
         <>
       {list_invite?.length > 0 ? (

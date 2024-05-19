@@ -1,4 +1,4 @@
-import { useContractRead } from "wagmi";
+import { useContractRead, useContractWrite } from "wagmi";
 import { abi } from "../../abi";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { sendOtpApi, verifyOtpApi } from "../apis/otp.api";
@@ -84,7 +84,7 @@ export const useContract = (data: dataContract) => {
       abi,
       address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
       functionName: "getContractDetailByIndex",
-      args: [1],
+      args: [data.contract_id],
       select(data: any) {
         return {
           title: data.title,
@@ -102,7 +102,38 @@ export const useContract = (data: dataContract) => {
         };
       },
     });
-    return { getContractDetailByIndex };
+    const reportCompletion = useContractWrite({
+      abi,
+      address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+      functionName: "reportCompletion",
+      args: [data.contract_id],
+    } as any);
+
+    const rejectCompletion = useContractWrite({
+      abi,
+      address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+      functionName: "rejectCompletion",
+      args: [data.contract_id],
+    } as any);
+    const finalizeContract = useContractWrite({
+      abi,
+      address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+      functionName: "finalizeContract",
+      args: [data.contract_id],
+    } as any);
+    const FreelancerNoSign = useContractWrite({
+      abi,
+      address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+      functionName: "FreelancerNoSign",
+      args: [data.contract_id],
+    } as any);
+    return {
+      getContractDetailByIndex,
+      reportCompletion,
+      rejectCompletion,
+      finalizeContract,
+      FreelancerNoSign,
+    };
   }
 };
 
@@ -243,7 +274,7 @@ export const useJob = (page) => {
   const queryClient = useQueryClient();
   const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
-  
+
   const jobApplied = useQuery({
     queryKey: ["jobApplied"],
     queryFn: async () =>

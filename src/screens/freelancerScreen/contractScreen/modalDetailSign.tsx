@@ -21,7 +21,7 @@ import SignatureBox from "../../component/signatureBox";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getDetailInfoApi } from "../../../apis/info.api";
 import ModalDetailJob from "../../component/modalDetailJob";
-import { useAccount, useContractWrite } from "wagmi";
+import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import { abi } from "../../../../abi";
 import ModalLoading from "../../component/modalLoading";
 import { AuthContext } from "../../../utils/context";
@@ -43,6 +43,13 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
   const [isTimerRunning, setIsTimerRunning] = useState(true);
   const { sendOtp, verifyOtp } = useOTP();
   const [modalPolicy, setModalPolicy] = useState(false);
+  const [modalVisibleReason, setModalVisibleReason] = useState(false);
+  const FreelancerNoSign = useContractWrite({
+    abi,
+    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+    functionName: "FreelancerNoSign",
+    args: [contract?.id, "Từ chối ký hợp đồng"],
+  } as any);
   useEffect(() => {
     let interval;
     if (isTimerRunning) {
@@ -158,6 +165,17 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
         Alert.alert("Xác nhận OTP thất bại");
       });
   };
+  const handleCancelContract = async () => {
+    await FreelancerNoSign.writeAsync()
+      .then((res) => {
+        Alert.alert("Hủy hợp đồng thành công");
+        setmodalvisiable(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        Alert.alert("Hủy hợp đồng thất bại");
+      });
+  };
   return (
     <ScrollView>
       <TouchableNativeFeedback
@@ -172,7 +190,7 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
                 { flex: 1, textAlign: "center", paddingLeft: 30 },
               ]}
             >
-              Chi tiết hợp đồng
+              Ký hợp đồng
             </Text>
             <IconAntDesign
               name="close"
@@ -248,7 +266,7 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
               </View>
               {/* Điều khoản hợp đồng */}
               <ScrollView>
-                <View style={styles.info}>
+                <View style={[styles.info, { flexDirection: "row" }]}>
                   <Text>Điều khoản hợp đồng:</Text>
                   <TouchableOpacity onPress={() => setModalPolicy(true)}>
                     <Text style={{ color: "blue", marginLeft: 10 }}>
@@ -326,6 +344,9 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
                     <Button mode="contained" onPress={handleSendOtp}>
                       Ký hợp đồng
                     </Button>
+                    <Button mode="contained" onPress={handleCancelContract}>
+                      Hủy hợp đồng
+                    </Button>
                   </View>
                 </>
               ) : null}
@@ -357,7 +378,8 @@ const ModalDetailSign = ({ setmodalvisiable, contract }) => {
           <ModalLoading
             visible={
               confirmAfterFreelancerSignaContract.isPending ||
-              acceptContract.isLoading
+              acceptContract.isLoading ||
+              FreelancerNoSign.isLoading
             }
           />
           {/* modal otp */}

@@ -9,7 +9,7 @@ const handSignup = () => {
 }
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>FreelanceVN</Text>
+      <Text style={styles.text}>ITWork</Text>
       <TouchableOpacity style={styles.button} onPress={handLogin}>
         <Text style={{ fontSize: 20, color: "white" }}>Đăng nhập</Text>
       </TouchableOpacity>

@@ -49,7 +49,7 @@ const Job = ({ job }) => {
           setModalVisible(!modalVisible);
         }}
       >
-        <ModalDetailJob setModalVisible={setModalVisible} job={undefined} />
+        <ModalDetailJob setModalVisible={setModalVisible} job={job} />
       </Modal>
     </TouchableOpacity>
   );

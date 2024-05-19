@@ -11,8 +11,11 @@ import { Button } from "react-native-paper";
 import { useState } from "react";
 import ModalDetailContract from "../../component/modalDetailContract";
 import ModalDetailSign from "./modalDetailSign";
+import { useContractRead } from "wagmi";
+import { abi } from "../../../../abi";
 const ContractSign = ({contract}) => {
   const [modalVisible, setModalVisible] = useState(false);
+
   return (
     <View style={styles.container}>
       <View>

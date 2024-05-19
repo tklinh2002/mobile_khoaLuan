@@ -109,7 +109,7 @@ const Job = ({ navigation, job }) => {
           <Text style={{ fontSize: 20 }}>Ứng tuyển</Text>
         </View>
         <View>
-          <Text style={styles.text}>{[...detailJob.data["list_invite"]].length || 0}</Text>
+          <Text style={styles.text}>{[...detailJob.data?.list_invite].length || 0}</Text>
           <Text style={{ fontSize: 20 }}>Lời mời</Text>
         </View>
         <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
