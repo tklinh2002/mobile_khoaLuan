@@ -11,19 +11,21 @@ import JobInvite from "../screens/freelancerScreen/jobScreen/jobInviteScreen";
 const TabJobFreelancer = () => {
   const Tab = createMaterialTopTabNavigator();
   return (
-    <Tab.Navigator initialRouteName="JobProgress"
-    >
-      <Tab.Screen name="JobProgress" component={JobProgress} options={{
-        tabBarLabel: 'Đang làm',
-      }}/>
-      <Tab.Screen name="JobApply" component={JobApply} options={{
-        tabBarLabel: 'Ứng tuyển',
-      
-      }}/>
-      <Tab.Screen name="JobInvite" component={JobInvite} options={{
-        tabBarLabel: 'Được mời',
-      
-      }}/>
+    <Tab.Navigator initialRouteName="JobApply">
+      <Tab.Screen
+        name="JobApply"
+        component={JobApply}
+        options={{
+          tabBarLabel: "Ứng tuyển",
+        }}
+      />
+      <Tab.Screen
+        name="JobInvite"
+        component={JobInvite}
+        options={{
+          tabBarLabel: "Được mời",
+        }}
+      />
     </Tab.Navigator>
   );
 };

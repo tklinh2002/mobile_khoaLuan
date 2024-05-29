@@ -1,686 +1,961 @@
 export const abi = [
 	{
+		"type": "constructor",
+		"name": "",
 		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
+		"outputs": [],
+		"stateMutability": "nonpayable"
 	},
 	{
-		"anonymous": false,
+		"type": "event",
+		"name": "ContractCanceled",
 		"inputs": [
 			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "balance",
-				"type": "uint256"
-			}
-		],
-		"name": "BalanceBefore",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "uint256",
+				"type": "uint256",
 				"name": "jobId",
-				"type": "uint256"
+				"indexed": true,
+				"internalType": "uint256"
 			}
 		],
+		"outputs": [],
+		"anonymous": false
+	},
+	{
+		"type": "event",
+		"name": "FundsCancelForClient",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "amount",
+				"indexed": false,
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [],
+		"anonymous": false
+	},
+	{
+		"type": "event",
+		"name": "FundsCancelForFreelancer",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "amount",
+				"indexed": false,
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [],
+		"anonymous": false
+	},
+	{
+		"type": "event",
+		"name": "FundsCompleted",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "amount",
+				"indexed": false,
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [],
+		"anonymous": false
+	},
+	{
+		"type": "event",
+		"name": "FundsDeposited",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "amount",
+				"indexed": false,
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [],
+		"anonymous": false
+	},
+	{
+		"type": "event",
+		"name": "FundsDepositedofFreelancer",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "amount",
+				"indexed": false,
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [],
+		"anonymous": false
+	},
+	{
+		"type": "event",
+		"name": "JobAccepted",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "jobId",
+				"indexed": true,
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [],
+		"anonymous": false
+	},
+	{
+		"type": "event",
+		"name": "JobApproved",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "jobId",
+				"indexed": true,
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [],
+		"anonymous": false
+	},
+	{
+		"type": "event",
+		"name": "JobCompleted",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "jobId",
+				"indexed": true,
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [],
+		"anonymous": false
+	},
+	{
+		"type": "event",
 		"name": "JobCreated",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [],
-		"name": "Ok",
-		"type": "event"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "signature",
-				"type": "string"
+				"type": "uint256",
+				"name": "jobId",
+				"indexed": true,
+				"internalType": "uint256"
 			}
 		],
-		"name": "acceptContract",
 		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
+		"anonymous": false
 	},
 	{
+		"type": "function",
+		"name": "FreelancerNoSign",
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"type": "uint256",
 				"name": "id",
-				"type": "uint256"
+				"internalType": "uint256"
 			},
 			{
-				"internalType": "string",
+				"type": "string",
 				"name": "reason",
-				"type": "string"
+				"internalType": "string"
 			}
 		],
+		"outputs": [],
+		"stateMutability": "nonpayable"
+	},
+	{
+		"type": "function",
+		"name": "acceptContract",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "id",
+				"internalType": "uint256"
+			},
+			{
+				"type": "string",
+				"name": "signature",
+				"internalType": "string"
+			}
+		],
+		"outputs": [],
+		"stateMutability": "payable"
+	},
+	{
+		"type": "function",
+		"name": "acceptPolicyContract",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "id",
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [],
+		"stateMutability": "nonpayable"
+	},
+	{
+		"type": "function",
 		"name": "cancelContract",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "string",
-				"name": "_title",
-				"type": "string"
+				"type": "uint256",
+				"name": "id",
+				"internalType": "uint256"
 			},
 			{
-				"internalType": "string",
-				"name": "_description",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_signature",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_bids",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_jobId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_freelancerId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_clientId",
-				"type": "uint256"
+				"type": "string",
+				"name": "reason",
+				"internalType": "string"
 			}
 		],
+		"outputs": [],
+		"stateMutability": "nonpayable"
+	},
+	{
+		"type": "function",
 		"name": "createContract",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
+				"type": "string",
+				"name": "_title",
+				"internalType": "string"
+			},
+			{
+				"type": "string",
+				"name": "_description",
+				"internalType": "string"
+			},
+			{
+				"type": "string",
+				"name": "_signature",
+				"internalType": "string"
+			},
+			{
+				"type": "uint256",
+				"name": "_bids",
+				"internalType": "uint256"
+			},
+			{
+				"type": "uint256",
+				"name": "_jobId",
+				"internalType": "uint256"
+			},
+			{
+				"type": "uint256",
+				"name": "_freelancerId",
+				"internalType": "uint256"
+			},
+			{
+				"type": "uint256",
+				"name": "_clientId",
+				"internalType": "uint256"
 			}
 		],
+		"outputs": [
+			{
+				"type": "uint256",
+				"name": "",
+				"internalType": "uint256"
+			}
+		],
+		"stateMutability": "payable"
+	},
+	{
+		"type": "function",
 		"name": "finalizeContract",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "jobIdInput",
-				"type": "uint256"
+				"type": "uint256",
+				"name": "id",
+				"internalType": "uint256"
 			}
 		],
+		"outputs": [],
+		"stateMutability": "nonpayable"
+	},
+	{
+		"type": "function",
 		"name": "getAllContractsByJobId",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "id",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "jobIdcurent",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "title",
-						"type": "string"
-					},
-					{
-						"internalType": "uint8",
-						"name": "status",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct ContractInfo[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
+				"type": "uint256",
+				"name": "jobIdInput",
+				"internalType": "uint256"
 			}
 		],
+		"outputs": [
+			{
+				"type": "tuple[]",
+				"name": "",
+				"components": [
+					{
+						"type": "uint256",
+						"name": "id",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "jobIdcurent",
+						"internalType": "uint256"
+					},
+					{
+						"type": "string",
+						"name": "title",
+						"internalType": "string"
+					},
+					{
+						"type": "uint8",
+						"name": "status",
+						"internalType": "uint8"
+					},
+					{
+						"type": "uint256",
+						"name": "clientId",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "freelancerId",
+						"internalType": "uint256"
+					}
+				],
+				"internalType": "struct ContractInfo[]"
+			}
+		],
+		"stateMutability": "view"
+	},
+	{
+		"type": "function",
 		"name": "getContractById",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "string",
-						"name": "title",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "description",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "signatureC",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "signatureF",
-						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "bids",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "jobIdcurent",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "clientId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "freelancerId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint8",
-						"name": "status",
-						"type": "uint8"
-					},
-					{
-						"internalType": "address",
-						"name": "client",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "freelancer",
-						"type": "address"
-					},
-					{
-						"internalType": "string",
-						"name": "cancelReason",
-						"type": "string"
-					}
-				],
-				"internalType": "struct SmartContract.Job",
-				"name": "",
-				"type": "tuple"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "index",
-				"type": "uint256"
+				"type": "uint256",
+				"name": "id",
+				"internalType": "uint256"
 			}
 		],
+		"outputs": [
+			{
+				"type": "tuple",
+				"name": "",
+				"components": [
+					{
+						"type": "string",
+						"name": "title",
+						"internalType": "string"
+					},
+					{
+						"type": "string",
+						"name": "description",
+						"internalType": "string"
+					},
+					{
+						"type": "string",
+						"name": "signatureC",
+						"internalType": "string"
+					},
+					{
+						"type": "string",
+						"name": "signatureF",
+						"internalType": "string"
+					},
+					{
+						"type": "uint256",
+						"name": "bids",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "jobIdcurent",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "clientId",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "freelancerId",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint8",
+						"name": "status",
+						"internalType": "uint8"
+					},
+					{
+						"type": "address",
+						"name": "client",
+						"internalType": "address"
+					},
+					{
+						"type": "address",
+						"name": "freelancer",
+						"internalType": "address"
+					},
+					{
+						"type": "string",
+						"name": "cancelReason",
+						"internalType": "string"
+					},
+					{
+						"type": "tuple[]",
+						"name": "history",
+						"components": [
+							{
+								"internalType": "uint8",
+								"name": "typeUser",
+								"type": "uint8"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint8",
+								"name": "accepted",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct SmartContract.historyEditPolicy[]"
+					}
+				],
+				"internalType": "struct SmartContract.Job"
+			}
+		],
+		"stateMutability": "view"
+	},
+	{
+		"type": "function",
 		"name": "getContractDetailByIndex",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "index",
+				"internalType": "uint256"
+			}
+		],
 		"outputs": [
 			{
+				"type": "tuple",
+				"name": "",
 				"components": [
 					{
-						"internalType": "string",
+						"type": "string",
 						"name": "title",
-						"type": "string"
+						"internalType": "string"
 					},
 					{
-						"internalType": "string",
+						"type": "string",
 						"name": "description",
-						"type": "string"
+						"internalType": "string"
 					},
 					{
-						"internalType": "string",
+						"type": "string",
 						"name": "signatureC",
-						"type": "string"
+						"internalType": "string"
 					},
 					{
-						"internalType": "string",
+						"type": "string",
 						"name": "signatureF",
-						"type": "string"
+						"internalType": "string"
 					},
 					{
-						"internalType": "uint256",
+						"type": "uint256",
 						"name": "bids",
-						"type": "uint256"
+						"internalType": "uint256"
 					},
 					{
-						"internalType": "uint256",
+						"type": "uint256",
 						"name": "jobIdcurent",
-						"type": "uint256"
+						"internalType": "uint256"
 					},
 					{
-						"internalType": "uint256",
+						"type": "uint256",
 						"name": "clientId",
-						"type": "uint256"
+						"internalType": "uint256"
 					},
 					{
-						"internalType": "uint256",
+						"type": "uint256",
 						"name": "freelancerId",
-						"type": "uint256"
+						"internalType": "uint256"
 					},
 					{
-						"internalType": "uint8",
+						"type": "uint8",
 						"name": "status",
-						"type": "uint8"
+						"internalType": "uint8"
 					},
 					{
-						"internalType": "address",
+						"type": "address",
 						"name": "client",
-						"type": "address"
+						"internalType": "address"
 					},
 					{
-						"internalType": "address",
+						"type": "address",
 						"name": "freelancer",
-						"type": "address"
+						"internalType": "address"
 					},
 					{
-						"internalType": "string",
+						"type": "string",
 						"name": "cancelReason",
-						"type": "string"
+						"internalType": "string"
+					},
+					{
+						"type": "tuple[]",
+						"name": "history",
+						"components": [
+							{
+								"internalType": "uint8",
+								"name": "typeUser",
+								"type": "uint8"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint8",
+								"name": "accepted",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct SmartContract.historyEditPolicy[]"
 					}
 				],
-				"internalType": "struct SmartContract.Job",
-				"name": "",
-				"type": "tuple"
+				"internalType": "struct SmartContract.Job"
 			}
 		],
-		"stateMutability": "view",
-		"type": "function"
+		"stateMutability": "view"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "clientAddress",
-				"type": "address"
-			}
-		],
+		"type": "function",
 		"name": "getContractsByClient",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "id",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "jobIdcurent",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "title",
-						"type": "string"
-					},
-					{
-						"internalType": "uint8",
-						"name": "status",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct ContractInfo[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "clientId",
-				"type": "uint256"
+				"type": "address",
+				"name": "clientAddress",
+				"internalType": "address"
 			}
 		],
+		"outputs": [
+			{
+				"type": "tuple[]",
+				"name": "",
+				"components": [
+					{
+						"type": "uint256",
+						"name": "id",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "jobIdcurent",
+						"internalType": "uint256"
+					},
+					{
+						"type": "string",
+						"name": "title",
+						"internalType": "string"
+					},
+					{
+						"type": "uint8",
+						"name": "status",
+						"internalType": "uint8"
+					},
+					{
+						"type": "uint256",
+						"name": "clientId",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "freelancerId",
+						"internalType": "uint256"
+					}
+				],
+				"internalType": "struct ContractInfo[]"
+			}
+		],
+		"stateMutability": "view"
+	},
+	{
+		"type": "function",
 		"name": "getContractsByClientId",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "id",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "jobIdcurent",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "title",
-						"type": "string"
-					},
-					{
-						"internalType": "uint8",
-						"name": "status",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct ContractInfo[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "freelancerAddress",
-				"type": "address"
-			}
-		],
-		"name": "getContractsByFreelancer",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "id",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "jobIdcurent",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "title",
-						"type": "string"
-					},
-					{
-						"internalType": "uint8",
-						"name": "status",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct ContractInfo[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "freelancerId",
-				"type": "uint256"
-			}
-		],
-		"name": "getContractsByFreelancerId",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "id",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "jobIdcurent",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "title",
-						"type": "string"
-					},
-					{
-						"internalType": "uint8",
-						"name": "status",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct ContractInfo[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "currentJobId",
-				"type": "uint256"
-			}
-		],
-		"name": "getJobInfoByCurrentJobId",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			},
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "jobId",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "jobs",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "title",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "description",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "signatureC",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "signatureF",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "bids",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "jobIdcurent",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
+				"type": "uint256",
 				"name": "clientId",
-				"type": "uint256"
-			},
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [
 			{
-				"internalType": "uint256",
+				"type": "tuple[]",
+				"name": "",
+				"components": [
+					{
+						"type": "uint256",
+						"name": "id",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "jobIdcurent",
+						"internalType": "uint256"
+					},
+					{
+						"type": "string",
+						"name": "title",
+						"internalType": "string"
+					},
+					{
+						"type": "uint8",
+						"name": "status",
+						"internalType": "uint8"
+					},
+					{
+						"type": "uint256",
+						"name": "clientId",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "freelancerId",
+						"internalType": "uint256"
+					}
+				],
+				"internalType": "struct ContractInfo[]"
+			}
+		],
+		"stateMutability": "view"
+	},
+	{
+		"type": "function",
+		"name": "getContractsByFreelancer",
+		"inputs": [
+			{
+				"type": "address",
+				"name": "freelancerAddress",
+				"internalType": "address"
+			}
+		],
+		"outputs": [
+			{
+				"type": "tuple[]",
+				"name": "",
+				"components": [
+					{
+						"type": "uint256",
+						"name": "id",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "jobIdcurent",
+						"internalType": "uint256"
+					},
+					{
+						"type": "string",
+						"name": "title",
+						"internalType": "string"
+					},
+					{
+						"type": "uint8",
+						"name": "status",
+						"internalType": "uint8"
+					},
+					{
+						"type": "uint256",
+						"name": "clientId",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "freelancerId",
+						"internalType": "uint256"
+					}
+				],
+				"internalType": "struct ContractInfo[]"
+			}
+		],
+		"stateMutability": "view"
+	},
+	{
+		"type": "function",
+		"name": "getContractsByFreelancerId",
+		"inputs": [
+			{
+				"type": "uint256",
 				"name": "freelancerId",
-				"type": "uint256"
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [
+			{
+				"type": "tuple[]",
+				"name": "",
+				"components": [
+					{
+						"type": "uint256",
+						"name": "id",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "jobIdcurent",
+						"internalType": "uint256"
+					},
+					{
+						"type": "string",
+						"name": "title",
+						"internalType": "string"
+					},
+					{
+						"type": "uint8",
+						"name": "status",
+						"internalType": "uint8"
+					},
+					{
+						"type": "uint256",
+						"name": "clientId",
+						"internalType": "uint256"
+					},
+					{
+						"type": "uint256",
+						"name": "freelancerId",
+						"internalType": "uint256"
+					}
+				],
+				"internalType": "struct ContractInfo[]"
+			}
+		],
+		"stateMutability": "view"
+	},
+	{
+		"type": "function",
+		"name": "getJobInfoByCurrentJobId",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "currentJobId",
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [
+			{
+				"type": "uint256",
+				"name": "",
+				"internalType": "uint256"
 			},
 			{
-				"internalType": "uint8",
+				"type": "string",
+				"name": "",
+				"internalType": "string"
+			},
+			{
+				"type": "string",
+				"name": "",
+				"internalType": "string"
+			},
+			{
+				"type": "string",
+				"name": "",
+				"internalType": "string"
+			},
+			{
+				"type": "string",
+				"name": "",
+				"internalType": "string"
+			},
+			{
+				"type": "uint256",
+				"name": "",
+				"internalType": "uint256"
+			},
+			{
+				"type": "uint8",
+				"name": "",
+				"internalType": "uint8"
+			},
+			{
+				"type": "address",
+				"name": "",
+				"internalType": "address"
+			},
+			{
+				"type": "address",
+				"name": "",
+				"internalType": "address"
+			},
+			{
+				"type": "uint256",
+				"name": "",
+				"internalType": "uint256"
+			},
+			{
+				"type": "uint256",
+				"name": "",
+				"internalType": "uint256"
+			},
+			{
+				"type": "tuple[]",
+				"name": "history",
+				"components": [
+					{
+						"type": "uint8",
+						"name": "typeUser",
+						"internalType": "uint8"
+					},
+					{
+						"type": "string",
+						"name": "description",
+						"internalType": "string"
+					},
+					{
+						"type": "uint8",
+						"name": "accepted",
+						"internalType": "uint8"
+					}
+				],
+				"internalType": "struct SmartContract.historyEditPolicy[]"
+			}
+		],
+		"stateMutability": "view"
+	},
+	{
+		"type": "function",
+		"name": "jobId",
+		"inputs": [],
+		"outputs": [
+			{
+				"type": "uint256",
+				"name": "",
+				"internalType": "uint256"
+			}
+		],
+		"stateMutability": "view"
+	},
+	{
+		"type": "function",
+		"name": "jobs",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "",
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [
+			{
+				"type": "string",
+				"name": "title",
+				"internalType": "string"
+			},
+			{
+				"type": "string",
+				"name": "description",
+				"internalType": "string"
+			},
+			{
+				"type": "string",
+				"name": "signatureC",
+				"internalType": "string"
+			},
+			{
+				"type": "string",
+				"name": "signatureF",
+				"internalType": "string"
+			},
+			{
+				"type": "uint256",
+				"name": "bids",
+				"internalType": "uint256"
+			},
+			{
+				"type": "uint256",
+				"name": "jobIdcurent",
+				"internalType": "uint256"
+			},
+			{
+				"type": "uint256",
+				"name": "clientId",
+				"internalType": "uint256"
+			},
+			{
+				"type": "uint256",
+				"name": "freelancerId",
+				"internalType": "uint256"
+			},
+			{
+				"type": "uint8",
 				"name": "status",
-				"type": "uint8"
+				"internalType": "uint8"
 			},
 			{
-				"internalType": "address",
+				"type": "address",
 				"name": "client",
-				"type": "address"
+				"internalType": "address"
 			},
 			{
-				"internalType": "address",
+				"type": "address",
 				"name": "freelancer",
-				"type": "address"
+				"internalType": "address"
 			},
 			{
-				"internalType": "string",
+				"type": "string",
 				"name": "cancelReason",
-				"type": "string"
+				"internalType": "string"
 			}
 		],
-		"stateMutability": "view",
-		"type": "function"
+		"stateMutability": "view"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			}
-		],
+		"type": "function",
 		"name": "rejectCompletion",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"type": "uint256",
 				"name": "id",
-				"type": "uint256"
+				"internalType": "uint256"
 			}
 		],
-		"name": "reportCompletion",
 		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
+		"stateMutability": "nonpayable"
+	},
+	{
+		"type": "function",
+		"name": "reportCompletion",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "id",
+				"internalType": "uint256"
+			}
+		],
+		"outputs": [],
+		"stateMutability": "nonpayable"
+	},
+	{
+		"type": "function",
+		"name": "updatePolicyContract",
+		"inputs": [
+			{
+				"type": "uint256",
+				"name": "id",
+				"internalType": "uint256"
+			},
+			{
+				"type": "string",
+				"name": "_description",
+				"internalType": "string"
+			}
+		],
+		"outputs": [],
+		"stateMutability": "nonpayable"
 	}
 ]

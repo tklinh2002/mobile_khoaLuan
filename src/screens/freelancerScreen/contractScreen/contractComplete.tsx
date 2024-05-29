@@ -12,16 +12,11 @@ import { useState } from "react";
 import ModalDetailContract from "../../component/modalDetailContract";
 const ContractComplete = ({contract}) => {
   const [modalVisible, setModalVisible] = useState(false);
-  console.log('contract', contract);
   return (
     <View style={styles.container}>
       <View>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Image
-            style={{ width: 50, height: 50, borderRadius: 20 }}
-            source={require("../../../assets/avatar_temp.jpg")}
-          />
-          <Text style={styles.text}>Tên Client</Text>
+          <Text style={styles.text}>{contract?.title}</Text>
         </View>
         <Text style={styles.title} numberOfLines={5}>
         </Text>

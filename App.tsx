@@ -2,6 +2,7 @@ import { NavigationContainer, CommonActions } from "@react-navigation/native";
 import Route from "./src/router/router"; // Assuming this is your custom router component
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import TestScreen from "./src/testscreen";
+
 import {
   createWeb3Modal,
   defaultWagmiConfig,
@@ -9,7 +10,13 @@ import {
 import { WagmiConfig } from "wagmi";
 import { sepolia } from "viem/chains";
 import { AuthProvider } from "./src/utils/context";
+import { LogBox } from "react-native";
 
+// Ignore log notification by message
+LogBox.ignoreLogs(["TRenderEngineProvider: Support for defaultProps"]);
+
+// Ignore all log notifications
+LogBox.ignoreAllLogs();
 const projectId = "3064cb3b58975b8c8cd65e22a07d3ad0";
 const metadata = {
   name: "Web3Modal RN",
@@ -22,7 +29,7 @@ const metadata = {
   },
 };
 const chains = [sepolia];
-const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
+const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata }) as any;
 createWeb3Modal({
   projectId,
   chains,

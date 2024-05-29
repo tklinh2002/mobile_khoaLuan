@@ -9,7 +9,9 @@ import {
   jobAplliedAPI,
 } from "../apis/job.apiF";
 import {
+  cancelContractApi,
   clientConfirmTaskApi,
+  completeContractApi,
   createCommentTaskApi,
   createTaskApi,
   deleteTaskApi,
@@ -29,6 +31,7 @@ import { acceptInviteApi, getListInviteApi } from "../apis/invite.api";
 import { getNotificationApi, sendNoticationApi } from "../apis/noti.api";
 import { useContext } from "react";
 import { AuthContext } from "../utils/context";
+import { getJobApi } from "../apis/job.api";
 
 type dataContract = {
   freelancerId?: string;
@@ -39,7 +42,7 @@ export const useContract = (data: dataContract) => {
   if (data.freelancerId != undefined) {
     const getContractsByFreelancerId = useContractRead({
       abi,
-      address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+      address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
       functionName: "getContractsByFreelancerId",
       args: [data.freelancerId],
       select(data) {
@@ -61,7 +64,7 @@ export const useContract = (data: dataContract) => {
   if (data.client_id != undefined) {
     const getContractsByClientId = useContractRead({
       abi,
-      address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+      address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
       functionName: "getContractsByClientId",
       args: [data.client_id],
       select(data) {
@@ -82,7 +85,7 @@ export const useContract = (data: dataContract) => {
   if (data.contract_id != undefined) {
     const getContractDetailByIndex = useContractRead({
       abi,
-      address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+      address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
       functionName: "getContractDetailByIndex",
       args: [data.contract_id],
       select(data: any) {
@@ -104,28 +107,34 @@ export const useContract = (data: dataContract) => {
     });
     const reportCompletion = useContractWrite({
       abi,
-      address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+      address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
       functionName: "reportCompletion",
       args: [data.contract_id],
     } as any);
 
     const rejectCompletion = useContractWrite({
       abi,
-      address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+      address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
       functionName: "rejectCompletion",
       args: [data.contract_id],
     } as any);
     const finalizeContract = useContractWrite({
       abi,
-      address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+      address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
       functionName: "finalizeContract",
       args: [data.contract_id],
     } as any);
     const FreelancerNoSign = useContractWrite({
       abi,
-      address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+      address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
       functionName: "FreelancerNoSign",
-      args: [data.contract_id],
+      args: [data.contract_id, 'Từ chối ký'],
+    } as any);
+    const cancelContract = useContractWrite({
+      abi,
+      address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
+      functionName: "cancelContract",
+      args: [data.contract_id, 'Hủy bỏ hợp đồng'],
     } as any);
     return {
       getContractDetailByIndex,
@@ -133,6 +142,7 @@ export const useContract = (data: dataContract) => {
       rejectCompletion,
       finalizeContract,
       FreelancerNoSign,
+      cancelContract
     };
   }
 };
@@ -140,7 +150,7 @@ export const useContract = (data: dataContract) => {
 export const useDetailContract = (jobId) => {
   const getJobInfoByCurrentJobId = useContractRead({
     abi,
-    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+    address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
     functionName: "getJobInfoByCurrentJobId",
     args: [jobId],
     select(data) {
@@ -183,6 +193,7 @@ export const useOTP = () => {
   });
   return { sendOtp, verifyOtp, confirmAfterFreelancerSignaContract };
 };
+
 export const useTask = (taskID?: string) => {
   const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
@@ -234,10 +245,12 @@ export const useTask = (taskID?: string) => {
     deleteTask,
   };
 };
+
 type dataAccept = {
   jobid: string;
   status: number;
 };
+
 export const useJobInvite = () => {
   const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
@@ -270,7 +283,7 @@ export const useNotification = () => {
   return { getNotification, sendNotication };
 };
 
-export const useJob = (page) => {
+export const useJob = (page, keyword?: string) => {
   const queryClient = useQueryClient();
   const { infoLogin, login, logout } = useContext(AuthContext);
   const token = infoLogin["access_token"];
@@ -287,7 +300,29 @@ export const useJob = (page) => {
   const getListJob = useQuery({
     queryKey: ["jobs", page],
     queryFn: async () =>
-      getListJobApiF(page, 10, null, null, token).then((res) => res.data),
+      getListJobApiF(page, 10, null, keyword, token).then((res) => res.data),
   });
   return { jobApplied, getListJob };
+};
+
+export const useJobContract = (jobId) => {
+  const { infoLogin, login, logout } = useContext(AuthContext);
+  const token = infoLogin["access_token"];
+  const detailJob = useQuery({
+    queryKey: ["job", jobId],
+    queryFn: async () => {
+      return await getJobApi(jobId, token).then((res) => {
+        return res.data.data.data;
+      });
+    },
+  });
+  const completeContract = useMutation({
+    mutationKey: ["completeContract"],
+    mutationFn: () => completeContractApi(token, jobId),
+  });
+  const cancelContract = useMutation({
+    mutationKey: ["cancelContract"],
+    mutationFn: () => cancelContractApi(token, jobId),
+  });
+  return { detailJob, completeContract, cancelContract };
 };

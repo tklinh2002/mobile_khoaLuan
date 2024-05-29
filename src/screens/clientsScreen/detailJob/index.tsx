@@ -11,14 +11,14 @@ import Skill from "../../freelancerScreen/findJobScreen/skill";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "../../../utils/format";
 import { useRoute } from "@react-navigation/native";
-
+import  IconAntDesign from "react-native-vector-icons/AntDesign";
 const DetailJob = () => {
   const route = useRoute();
   const id = route.params["id"];
   const queryClient = useQueryClient();
-  const job = queryClient.getQueryData(["job", id]);
+  const job = queryClient.getQueryData(["job", id]) as any;
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} >
       <Text style={styles.title}>{job["title"]}</Text>
       <Text style={styles.text}>Mô tả công việc: {job["desc"]}</Text>
       <Text style={styles.text}>Chi tiết công việc: {job["content"]}</Text>
@@ -34,9 +34,15 @@ const DetailJob = () => {
         source={{ uri: job["thumbnail"] }}
         style={{ width: 200, height: 200 }}
       />
-      <TouchableOpacity onPress={() => Linking.openURL(job["content_file"])}>
-        <Text style={{fontStyle:"italic"}}>{String(job["content_file"]).split("/").pop()}</Text>
-      </TouchableOpacity>
+      <TouchableOpacity
+          style={{ width: 300, marginTop: 10}}
+          onPress={() => Linking.openURL(job?.content_file)}
+        >
+          <IconAntDesign name="file1" size={60} />
+          <Text style={{fontStyle:"italic"}} numberOfLines={2}>
+            {String(job?.content_file).split("/").pop()}
+          </Text>
+        </TouchableOpacity>
     </ScrollView>
   );
 };

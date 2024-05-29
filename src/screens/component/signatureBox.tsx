@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -21,14 +21,44 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import * as FileSystem from "expo-file-system";
 import { getImage } from "../../apis/auth.api";
+import { AuthContext } from "../../utils/context";
+import ModalLoading from "./modalLoading";
+import { formatTime } from "../../utils/format";
 interface IPath {
   segments: String[];
   color?: string;
 }
 export default function SignatureBox({ setmodalvisiable, setSignature }) {
   const queryClient = useQueryClient();
+  const { infoLogin, login, logout } = useContext(AuthContext);
+  const token = infoLogin["access_token"];
+  const [modalOtp, setModalOtp] = useState(false);
+  const [otp, setOtp] = useState("");
+  const TIME_OUT = 180; //second
+  const [countdown, setCountdown] = useState(TIME_OUT); // 5 minutes in seconds
+  const [isTimerRunning, setIsTimerRunning] = useState(true);
+  const { sendOtp, verifyOtp } = useOTP();
   const [paths, setPaths] = useState<IPath[]>([]);
   const ref = useCanvasRef();
+  const [signatureTemp, setSignatureTemp] = useState("");
+
+  useEffect(() => {
+    let interval;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setCountdown((countdown) => {
+          if (countdown > 0) {
+            return countdown - 1;
+          } else {
+            setIsTimerRunning(false);
+            return 0;
+          }
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [isTimerRunning]);
   const pan = Gesture.Pan()
     .runOnJS(true)
     .onStart((g) => {
@@ -72,42 +102,63 @@ export default function SignatureBox({ setmodalvisiable, setSignature }) {
           type: "image/png",
           name: "signature.png",
         } as any;
-        // const formData = new FormData();
-        // formData.append("sign", blob);
-        const res = await getImage(blob.uri, blob.type, blob.name).then((res) => {
+        await getImage(token, blob.uri, blob.type, blob.name).then((res) => {
           console.log(res.data);
-          setSignature(res.data);
-          setmodalvisiable(false);
+          setSignatureTemp(res.data);
+          handleSendOtp();
           return res.data;
         });
-        const data = await res.data;
-        // const response = await fetch(
-        //   "https://timviecits.id.vn/api/v1/upload-file",
-        //   {
-        //     method: "POST",
-        //     body: formData,
-        //     headers: {
-        //       "Content-Type": "multipart/form-data",
-        //     },
-
-        //   }
-        // );
-        // const text = await response.text();
-        // console.log(text);
       } catch (error) {
         console.log(error);
       }
     }
   };
-
-  
-
+  const resendOTP = () => {
+    sendOtp
+      .mutateAsync()
+      .then((res) => {
+        setCountdown(TIME_OUT);
+        setIsTimerRunning(true);
+      })
+      .catch((err) => {
+        Alert.alert("Gửi mã OTP thất bại");
+      });
+  };
+  const handleSendOtp = async () => {
+    const res = await sendOtp
+      .mutateAsync()
+      .then((res) => {
+        console.log("send otp success");
+        setModalOtp(true);
+        setCountdown(TIME_OUT);
+        setIsTimerRunning(true);
+      })
+      .catch((err) => {
+        Alert.alert("Gửi mã OTP thất bại");
+        console.log(err);
+      });
+  };
+  const handleVerifyOtp = async () => {
+    verifyOtp
+      .mutateAsync(otp)
+      .then((res) => {
+        setSignature(signatureTemp);
+        setModalOtp(false);
+        setmodalvisiable(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        Alert.alert("Xác nhận OTP thất bại");
+      });
+  };
+  const saveSignatureWithOTP = async () => {
+    saveSignature();
+  };
   return (
     <>
       {/* // This is the main view of the app */}
       <GestureHandlerRootView style={{ flex: 1 }}>
         <View style={{ margin: 10 }}>
-          
           <IconAntDesign
             name="close"
             size={30}
@@ -146,7 +197,7 @@ export default function SignatureBox({ setmodalvisiable, setSignature }) {
                 <Button
                   style={{ backgroundColor: "green" }}
                   mode="contained"
-                  onPress={saveSignature}
+                  onPress={saveSignatureWithOTP}
                 >
                   Lưu
                 </Button>
@@ -160,8 +211,78 @@ export default function SignatureBox({ setmodalvisiable, setSignature }) {
               </Button>
             </View>
           </View>
+          {/* modal otp */}
+          <Modal visible={modalOtp} transparent={true}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={{ margin: 5, fontSize: 15 }}>
+                  Vui lòng nhập mã OTP ở mail để xác nhận chữ ký
+                </Text>
+                <TextInput
+                  mode="outlined"
+                  keyboardType="number-pad"
+                  maxLength={6}
+                  label={"Nhập OTP"}
+                  style={{ width: 200, textAlign: "center", margin: 10 }}
+                  onChangeText={setOtp}
+                />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                    width: 200,
+                    marginBottom: 20,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      color: isTimerRunning ? "black" : "red",
+                    }}
+                  >
+                    {formatTime(countdown)}
+                  </Text>
+                  <TouchableOpacity onPress={resendOTP}>
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        fontWeight: "600",
+                        color: "blue",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      Gửi lại
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <Button
+                    style={{ backgroundColor: "green", marginRight: 10 }}
+                    mode="contained"
+                    onPress={handleVerifyOtp}
+                  >
+                    Xác nhận otp
+                  </Button>
+                  <Button
+                    style={{ backgroundColor: "red", marginRight: 10 }}
+                    mode="contained"
+                    onPress={() => setModalOtp(false)}
+                  >
+                    Hủy
+                  </Button>
+                </View>
+                <ModalLoading visible={verifyOtp.isPending} />
+              </View>
+            </View>
+          </Modal>
+          {/* modal loading */}
+          <ModalLoading visible={sendOtp.isPending} />
         </View>
-
       </GestureHandlerRootView>
     </>
   );
@@ -193,5 +314,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
 });

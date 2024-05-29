@@ -54,6 +54,7 @@ const ModalApplyJob = ({ setModalVisible, job }) => {
       alert("Ứng tuyển thành công");
       setModalVisible(false);
     }).catch((error) => {
+      setIsLoading(false);
       Alert.alert("Lỗi", error["response"].data.message);
     });
   };

@@ -91,6 +91,29 @@ const createCommentTaskApi = async (token, data: AddCommentRequest) => {
   );
 };
 
+const completeContractApi = async (token, jobId: number) => {
+  return http.httpjson.post(
+    `/api/v1/job/complete/${jobId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+const cancelContractApi = async (token, jobId: number) => {
+  return http.httpjson.post(
+    `/api/v1/job/cancel/${jobId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 export {
   getTasksApi,
   createTaskApi,
@@ -100,4 +123,6 @@ export {
   clientConfirmTaskApi,
   freelancerUpdateStatusTaskApi,
   updateTaskApi,
+  completeContractApi,
+  cancelContractApi,
 };

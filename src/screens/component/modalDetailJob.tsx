@@ -6,9 +6,11 @@ import {
   Touchable,
   TouchableOpacity,
   Linking,
+  useWindowDimensions,
 } from "react-native";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { formatDate } from "../../utils/format";
+import RenderHtml from "react-native-render-html";
 const ModalDetailJob = ({ setModalVisible, job }) => {
   return (
     <View style={styles.container}>
@@ -27,8 +29,24 @@ const ModalDetailJob = ({ setModalVisible, job }) => {
         </View>
         <View style={styles.content}>
           <Text style={styles.title}>{job?.title}</Text>
-          <Text style={styles.text}>Mô tả công việc: {job?.desc}</Text>
-          <Text style={styles.text}>Chi tiết công việc: {job?.content}</Text>
+          <Text style={styles.text}>
+            {
+              <RenderHtml
+                contentWidth={useWindowDimensions().width}
+                source={{ html: "Mô tả công việc:" + job?.desc }}
+              />
+            }
+          </Text>
+
+          <Text style={styles.text}>
+            {
+              <RenderHtml
+                contentWidth={useWindowDimensions().width}
+                source={{ html: "Chi tiết công việc:" + job?.content }}
+              />
+            }
+          </Text>
+
           <Text style={styles.text}>Ngân sách: {job?.bids}</Text>
           <Text style={styles.text}>Thời hạn: {formatDate(job?.deadline)}</Text>
         </View>
@@ -47,7 +65,9 @@ const ModalDetailJob = ({ setModalVisible, job }) => {
           <Text style={styles.text}>Giới thiệu: {job?.cover_letter}</Text>
           <View>
             <Text style={[styles.text, { fontStyle: "italic" }]}>CV: </Text>
-            <TouchableOpacity onPress={()=>Linking.openURL(job?.content_file)}>
+            <TouchableOpacity
+              onPress={() => Linking.openURL(job?.content_file)}
+            >
               <IconAntDesign name="filetext1" size={70} color="black" />
             </TouchableOpacity>
           </View>

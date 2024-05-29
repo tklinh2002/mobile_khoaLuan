@@ -11,40 +11,40 @@ import { Button } from "react-native-paper";
 import { useState } from "react";
 import ModalDetailContract from "../../component/modalDetailContract";
 import ModalReportProgess from "../../component/modalReportProgess";
-const ContractProgess = ({contract}) => {
+const ContractProgess = ({ contract }) => {
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [modalVisibleProgess, setModalVisibleProgess] = useState(false);
   return (
     <View style={styles.container}>
       <View>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Image
-            style={{ width: 50, height: 50, borderRadius: 20 }}
-            source={require("../../../assets/avatar_temp.jpg")}
-          />
-          <Text style={styles.text}>Tên Client</Text>
-        </View>
-        <Text style={styles.title} numberOfLines={5}>
-          Frontend
-        </Text>
-        <View>
-          <Text style={styles.text}>Ngân sách: 1000$</Text>
-          <Text style={styles.text}>Ngày tạo: 20/07/2024</Text>
-          <Text style={styles.text}>Hạn chót: 20/08/2024</Text>
+          <Text style={styles.text}>{contract?.title}</Text>
         </View>
       </View>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Button
-            mode="contained"
-            style={{ margin: 5, backgroundColor: "#E0970A" }}
-          >
-            Xem chi tiết
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <Button
+          mode="contained"
+          style={{ margin: 5, backgroundColor: "#E0970A" }}
+        >
+          Xem chi tiết
+        </Button>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Button mode="contained" style={{ margin: 5 }}>
+            Xem hợp đồng
           </Button>
         </TouchableOpacity>
-
-
+      <Modal animationType="slide" visible={modalVisibleProgess}>
+        <ModalReportProgess
+          setmodalvisiable={setModalVisibleProgess}
+          jobId={contract?.jobIdcurent}
+        />
+      </Modal>
       <Modal animationType="slide" visible={modalVisible}>
-        <ModalDetailContract setmodalvisiable={setModalVisible} contract={contract}/>
+        <ModalDetailContract
+          setmodalvisiable={setModalVisible}
+          contract={contract}
+        />
       </Modal>
     </View>
   );

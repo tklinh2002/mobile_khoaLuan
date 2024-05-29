@@ -6,10 +6,11 @@ import {
   Touchable,
   TouchableOpacity,
   Linking,
+  useWindowDimensions,
 } from "react-native";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { formatDate } from "../../../utils/format";
-import { Modal } from "react-native-paper";
+import RenderHtml from "react-native-render-html";
 const ModalDetailJobInvite = ({ setModalVisible, job }) => {
   return (
     <View style={styles.container}>
@@ -29,10 +30,22 @@ const ModalDetailJobInvite = ({ setModalVisible, job }) => {
         <View style={styles.content}>
           <Text style={styles.title}>{job?.title}</Text>
           <Text style={styles.text}>
-            Mô tả công việc: {job?.job_info?.desc}
+            Mô tả công việc:{" "}
+            {
+              <RenderHtml
+                contentWidth={useWindowDimensions().width}
+                source={{ html: job?.job_info?.desc }}
+              />
+            }
           </Text>
           <Text style={styles.text}>
-            Chi tiết công việc: {job?.job_info?.content}
+            Chi tiết công việc:
+            {
+              <RenderHtml
+                contentWidth={useWindowDimensions().width}
+                source={{ html: job?.job_info?.content }}
+              />
+            }
           </Text>
           <Text style={styles.text}>Ngân sách: {job?.job_info?.bids}</Text>
           <Text style={styles.text}>
@@ -70,8 +83,13 @@ const ModalDetailJobInvite = ({ setModalVisible, job }) => {
           >
             Thông tin Client
           </Text>
-          <Text style={styles.text}>Tên: {job?.client_info.last_name + ' '+ job?.client_info.first_name}</Text>
-          <Text style={styles.text}>Số điện thoại: {job?.client_info.phone_num}</Text>
+          <Text style={styles.text}>
+            Tên:{" "}
+            {job?.client_info.last_name + " " + job?.client_info.first_name}
+          </Text>
+          <Text style={styles.text}>
+            Số điện thoại: {job?.client_info.phone_num}
+          </Text>
           <Text style={styles.text}>Email: {job?.client_info.email}</Text>
         </View>
       </ScrollView>

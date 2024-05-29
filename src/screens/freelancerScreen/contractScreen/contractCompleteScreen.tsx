@@ -16,6 +16,7 @@ const ContractCompleteScreen = ({ navigation }) => {
   const contracts = getContractsByFreelancerId.data.filter(
     (contract: any) => contract && contract.status == 3
   );
+  console.log('contracts',getContractsByFreelancerId.data);
   return (
     <ScrollView>
       {contracts && contracts.length > 0 ? (

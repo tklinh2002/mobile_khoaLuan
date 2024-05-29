@@ -48,12 +48,17 @@ const TalentScreen = ({ navigation }) => {
             value={keyWord}
             onChangeText={(t) => setKeyWord(t)}
           />
-          <TouchableOpacity style={styles.buttonSeacrh} onPress={()=>listFreelancer.refetch()}>
+          <TouchableOpacity
+            style={styles.buttonSeacrh}
+            onPress={() => listFreelancer.refetch()}
+          >
             <IconEntypo name="magnifying-glass" size={30} color="white" />
           </TouchableOpacity>
         </View>
         {/* listFreelancer */}
-        {listFreelancer.isLoading || listPost.isLoading ? (
+        {listFreelancer.isLoading ||
+        listPost.isLoading ||
+        listFreelancer.isRefetching ? (
           <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >

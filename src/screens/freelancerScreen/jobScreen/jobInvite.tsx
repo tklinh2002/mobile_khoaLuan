@@ -6,12 +6,13 @@ import {
   Image,
   TouchableOpacity,
   Modal,
+  useWindowDimensions,
 } from "react-native";
 import { Button } from "react-native-paper";
 
 import { useState } from "react";
 import { formatTimeTask } from "../../../utils/format";
-
+import RenderHtml from "react-native-render-html";
 import { useJobInvite, useNotification } from "../../../hook/hook";
 import ModalDetailJobInvite from "./modalDetailJobInvite";
 import ModalLoading from "../../component/modalLoading";
@@ -94,7 +95,13 @@ const JobInvite = ({ job }) => {
           {job?.job_info?.title}
         </Text>
         <Text style={styles.text} numberOfLines={5}>
-          Mô tả công việc: {job?.job_info?.desc}
+          Mô tả công việc:{" "}
+          {
+            <RenderHtml
+              contentWidth={useWindowDimensions().width}
+              source={{ html: job?.job_info?.desc }}
+            />
+          }
         </Text>
         <Text style={styles.text}>Ngân sách: {job?.job_info?.bids}</Text>
         <Text style={styles.text}>
@@ -132,7 +139,7 @@ const JobInvite = ({ job }) => {
         )}
         {job?.status == 1 && (
           <>
-            <Text style={{ fontSize: 16, color: "green" }}>
+            <Text style={{ fontSize: 16, color: "#0900FF" }}>
               Chờ phản hồi client
             </Text>
           </>
@@ -179,7 +186,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   containerButton: {
-    justifyContent: "center",
+    justifyContent: "space-around",
     flexDirection: "row",
     alignItems: "center",
     margin: 10,

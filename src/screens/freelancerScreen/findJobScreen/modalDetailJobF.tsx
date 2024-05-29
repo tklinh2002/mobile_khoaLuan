@@ -7,10 +7,13 @@ import {
   TouchableOpacity,
   Linking,
   Image,
+  useWindowDimensions,
 } from "react-native";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { formatDate } from "../../../utils/format";
 import Skill from "./skill";
+import RenderHtml from "react-native-render-html";
+
 const ModalDetailJobF = ({ setModalVisible, job }) => {
   console.log(job);
   return (
@@ -35,8 +38,16 @@ const ModalDetailJobF = ({ setModalVisible, job }) => {
         />
         <View style={styles.content}>
           <Text style={styles.title}>{job?.title}</Text>
-          <Text style={styles.text}>Mô tả công việc: {job?.desc}</Text>
-          <Text style={styles.text}>Chi tiết công việc: {job?.content}</Text>
+          <Text style={styles.text}>Mô tả công việc:</Text>
+          <RenderHtml
+            contentWidth={useWindowDimensions().width}
+            source={{ html: job?.desc }}
+          />
+          <Text style={styles.text}>Chi tiết công việc: </Text>
+          <RenderHtml
+            contentWidth={useWindowDimensions().width}
+            source={{ html: job?.content }}
+          />
           <Text style={styles.text}>Ngân sách: {job?.bids}</Text>
           <Text style={styles.text}>Thời hạn: {formatDate(job?.deadline)}</Text>
         </View>

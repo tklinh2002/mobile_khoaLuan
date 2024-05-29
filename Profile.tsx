@@ -11,6 +11,8 @@ import {
   useContractWrite,
 } from "wagmi";
 import { abi } from "./abi";
+import { ethers } from "ethers";
+
 const Profile = () => {
   const { address, isConnected, connector: activeConnector } = useAccount();
   const { data: ensName } = useEnsName({ address });
@@ -25,30 +27,38 @@ const Profile = () => {
   const [bids, setBids] = useState(0); // Sample bid array
   const [jobId, setJobId] = useState(2); // Replace with a valid job ID
   const freelancerId = 1; // Replace with a freelancer address
-  const clientId = 1; // Replace with a client address
+  const clientId = 100; // Replace with a client address
   const reason = "Sample cancellation reason"; // Reason for canceling a contract
   const currentJobId = 3; // Replace with a valid job ID for getting job info
 
   // Contract interactions (write methods)
   const acceptContract = useContractWrite({
-    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e", // Replace with your contract address
+    address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4", // Replace with your contract address
     abi,
     functionName: "acceptContract",
     args: [id, signature],
   } as any);
   const test = useContractWrite({});
   const cancelContract = useContractWrite({
-    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+    address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
     abi,
     functionName: "cancelContract",
     args: [id, reason],
   } as any);
-
   const createContract = useContractWrite({
-    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+    address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
     abi,
     functionName: "createContract",
-    args: [title, description, signature, 0, jobId, freelancerId, clientId],
+    args: [
+      title,
+      description,
+      signature,
+      100000,
+      jobId,
+      freelancerId,
+      clientId,
+    ],
+
     onError: (error) => {
       if (error.message.includes("User rejected the transaction")) {
         console.log("User rejected contract creation.");
@@ -57,24 +67,25 @@ const Profile = () => {
         // Handle other errors (e.g., insufficient funds, contract logic errors)
       }
     },
+    value: 100000,
   } as any);
 
   const finalizeContract = useContractWrite({
-    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+    address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
     abi,
     functionName: "finalizeContract",
     args: [id],
   } as any);
 
   const reportCompletion = useContractWrite({
-    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+    address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
     abi,
     functionName: "reportCompletion",
     args: [id],
   } as any);
   const getJobInfoByCurrentJobId = useContractRead({
     abi,
-    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+    address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
     functionName: "getJobInfoByCurrentJobId",
     args: [6],
     select(data) {
@@ -96,7 +107,7 @@ const Profile = () => {
 
   const getContractsByFreelancerId = useContractRead({
     abi,
-    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+    address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
     functionName: "getContractsByFreelancerId",
     args: [1],
     select(data) {
@@ -116,7 +127,7 @@ const Profile = () => {
   });
   const getContractDetailByIndex = useContractRead({
     abi,
-    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+    address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
     functionName: "getContractDetailByIndex",
     args: [1],
     select(data: any) {
@@ -150,7 +161,7 @@ const Profile = () => {
   });
   const getContractsByClientId = useContractRead({
     abi,
-    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+    address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
     functionName: "getContractsByClientId",
     args: [9],
     select(data) {
@@ -257,58 +268,7 @@ const Profile = () => {
             )}
             {/* Job information */}
 
-            {getContractsByFreelancerId.data && (
-              <View>
-                {getContractsByFreelancerId.isLoading && (
-                  <Text>Loading contracts...</Text>
-                )}
-                {getContractsByFreelancerId.isError && (
-                  <Text>Error: {getContractsByFreelancerId.error.message}</Text>
-                )}
-
-                {/* Data available and parsing if necessary */}
-                {typeof getContractsByFreelancerId.data === "string" && (
-                  <View>
-                    {JSON.parse(getContractsByFreelancerId.data).map(
-                      (contract) => (
-                        <Text key={contract.id}>
-                          id: {contract.id}
-                          title: {contract.title}
-                          status: {contract.status}
-                          jobId: {contract.jobIdcurent}
-                        </Text>
-                      )
-                    )}
-                  </View>
-                )}
-                {typeof getContractsByClientId.data === "string" && (
-                  <View>
-                    {JSON.parse(getContractsByClientId.data).map((contract) => (
-                      <Text key={contract.id}>
-                        {}
-                        id: {contract.id}
-                        title: {contract.title}
-                        status: {contract.status}
-                        jobId: {contract.jobIdcurent}
-                      </Text>
-                    ))}
-                  </View>
-                )}
-                {getContractDetailByIndex.data && (
-                  <View>
-                    <Text>
-                      getContractDetailByIndex:
-                      {JSON.stringify(getContractDetailByIndex.data)}
-                    </Text>
-                  </View>
-                )}
-                {/* {
-        <Text>
-          getJobInfoByCurrentJobId: {JSON.stringify(getJobInfoByCurrentJobId.data)}
-        </Text>
-      } */}
-              </View>
-            )}
+            
           </>
         ) : (
           <>

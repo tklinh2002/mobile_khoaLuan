@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  useWindowDimensions,
+} from "react-native";
 import Skill from "./skill";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button } from "react-native-paper";
@@ -8,6 +15,7 @@ import ModalApplyJob from "./modalApplyJob";
 import { formatDate, formatTimePost } from "../../../utils/format";
 import { useQueryClient } from "@tanstack/react-query";
 import ModalDetailJobF from "./modalDetailJobF";
+import RenderHtml from "react-native-render-html";
 const Job = ({ job }) => {
   // console.log("job", job);
   const [modalVisible, setModalVisible] = useState(false);
@@ -17,9 +25,16 @@ const Job = ({ job }) => {
   return (
     <View style={styles.container}>
       <View>
-        <Text>{formatTimePost(job["created_at"])}</Text>
-        <Text style={styles.title}>{job["title"]}</Text>
-        <Text numberOfLines={4}>{job["desc"]}</Text>
+        <Text>{formatTimePost(job?.created_at)}</Text>
+        <Text style={styles.title}>{job?.title}</Text>
+        <Text numberOfLines={4}>
+          {
+            <RenderHtml
+              contentWidth={useWindowDimensions().width}
+              source={{ html: job?.desc }}
+            />
+          }
+        </Text>
       </View>
       <View style={styles.skillContainer}>
         {job?.skills.map((skill) => {
@@ -33,7 +48,10 @@ const Job = ({ job }) => {
         </Text>
       </View>
       {[...jobApllied].some((item) => item.job_id == job["id"]) ? (
-        <Button mode="contained" style={{ marginVertical: 10, backgroundColor:"#A1A1A1" }}>
+        <Button
+          mode="contained"
+          style={{ marginVertical: 10, backgroundColor: "#A1A1A1" }}
+        >
           Đã ứng tuyển
         </Button>
       ) : (

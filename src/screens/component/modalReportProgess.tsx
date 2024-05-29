@@ -19,7 +19,12 @@ import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { Button, Checkbox } from "react-native-paper";
 import TaskDetailModal from "./modalDetailTask";
 import AddTaskModal from "./addTaskModal";
-import { useContract, useDetailContract, useTask } from "../../hook/hook";
+import {
+  useContract,
+  useDetailContract,
+  useJobContract,
+  useTask,
+} from "../../hook/hook";
 import { useQueryClient } from "@tanstack/react-query";
 import { CreateJobTaskRequest } from "../../apis/type.task.api";
 import ModalLoading from "./modalLoading";
@@ -38,15 +43,16 @@ const ModalReportProgess = ({ setmodalvisiable, jobId }) => {
   const { getTasks, createTask, updateTask, deleteTask } = useTask(jobId);
   const queryClient = useQueryClient();
   const { infoLogin, login, logout } = useContext(AuthContext);
-  const { finalizeContract, rejectCompletion, reportCompletion } = useContract({
+  const {
+    finalizeContract,
+    rejectCompletion,
+    reportCompletion,
+    cancelContract,
+  } = useContract({
     contract_id: getJobInfoByCurrentJobId?.data?.contract_id + "",
   });
-  const cancelContract = useContractWrite({
-    abi,
-    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
-    functionName: "cancelContract",
-    args: [getJobInfoByCurrentJobId?.data?.contract_id + "", "Hủy hợp đồng"],
-  } as any);
+  const { cancelContract: cancelContractApi, completeContract } =
+    useJobContract(jobId);
   const handleAddTask = async (task: CreateJobTaskRequest) => {
     task.id = jobId;
     await createTask
@@ -120,8 +126,10 @@ const ModalReportProgess = ({ setmodalvisiable, jobId }) => {
     await finalizeContract
       .writeAsync()
       .then(async () => {
-        await getJobInfoByCurrentJobId.refetch();
-        Alert.alert("Thông báo", "Xác nhận hoàn thành hợp đồng thành công");
+        await completeContract.mutateAsync().then(async () => {
+          await getJobInfoByCurrentJobId.refetch();
+          Alert.alert("Thông báo", "Xác nhận hoàn thành hợp đồng thành công");
+        });
       })
       .catch((err) => {
         Alert.alert("Lỗi", "Xác nhận hoàn thành hợp đồng thất bại");
@@ -138,7 +146,35 @@ const ModalReportProgess = ({ setmodalvisiable, jobId }) => {
         Alert.alert("Lỗi", "Báo cáo hoàn thành hợp đồng thất bại");
       });
   };
-
+  const handleCancleContract = async () => {
+    Alert.alert("Xác nhận", "Bạn có chắc chắn muốn hủy hợp đồng này?", [
+      {
+        text: "Hủy",
+        style: "cancel",
+      },
+      {
+        text: "Hủy hợp đồng",
+        onPress: async () => {
+          await cancelContract
+            .writeAsync()
+            .then(async () => {
+              await cancelContractApi
+                .mutateAsync()
+                .then(async () => {
+                  await getJobInfoByCurrentJobId.refetch();
+                  Alert.alert("Thông báo", "Hủy hợp đồng thành công");
+                })
+                .catch((err) => {
+                  Alert.alert("Lỗi", "Hủy hợp đồng thất bại");
+                });
+            })
+            .catch((err) => {
+              Alert.alert("Lỗi", "Hủy hợp đồng thất bại");
+            });
+        },
+      },
+    ]);
+  };
   return (
     <ScrollView>
       <TouchableNativeFeedback
@@ -199,6 +235,17 @@ const ModalReportProgess = ({ setmodalvisiable, jobId }) => {
               <TouchableOpacity onPress={handleReportCompletion}>
                 <Button mode="outlined">
                   <Text>Báo cáo hoàn thành </Text>
+                </Button>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+          {getJobInfoByCurrentJobId?.data.status == 1 ? (
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-around" }}
+            >
+              <TouchableOpacity onPress={handleCancleContract}>
+                <Button mode="outlined">
+                  <Text>Hủy hợp đồng </Text>
                 </Button>
               </TouchableOpacity>
             </View>

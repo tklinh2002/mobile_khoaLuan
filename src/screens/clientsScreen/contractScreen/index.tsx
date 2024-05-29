@@ -21,7 +21,7 @@ const ContractScreen = ({ navigation }) => {
     client_id: infoLogin?.user?.id,
   });
   return (
-    <View>
+    <View style={{flex:1}}>
       <View
         style={{
           flexDirection: "row",

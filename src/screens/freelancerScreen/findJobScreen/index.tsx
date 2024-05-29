@@ -20,8 +20,12 @@ import { useJob } from "../../../hook/hook";
 const FindJodScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [page, setPage] = useState(1);
-  const { getListJob, jobApplied } = useJob(page);
-  console.log("getListJob", getListJob);
+  const [keyword, setKeyword] = useState("");
+  const { getListJob, jobApplied } = useJob(page, keyword);
+  const handleSearch = () => {
+    setPage(1);
+    getListJob.refetch();
+  };
   return (
     <ScrollView style={styles.container}>
       <Text style={{ fontSize: 30, fontWeight: "bold", marginLeft: 10 }}>
@@ -29,8 +33,13 @@ const FindJodScreen = ({ navigation }) => {
       </Text>
       {/* tìm kiếm */}
       <View style={styles.inputContainer}>
-        <TextInput style={styles.input} placeholder="Nhập ....." />
-        <TouchableOpacity style={styles.buttonSeacrh}>
+        <TextInput
+          style={styles.input}
+          placeholder="Nhập ....."
+          value={keyword}
+          onChangeText={(t) => setKeyword(t)}
+        />
+        <TouchableOpacity style={styles.buttonSeacrh} onPress={handleSearch}>
           <IconEntypo name="magnifying-glass" size={30} color="white" />
         </TouchableOpacity>
       </View>
@@ -40,7 +49,9 @@ const FindJodScreen = ({ navigation }) => {
         </Text>
       </TouchableOpacity>
       {/* danh sách công việc */}
-      {jobApplied.isLoading || getListJob.isLoading ? (
+      {jobApplied.isLoading ||
+      getListJob.isLoading ||
+      getListJob.isRefetching ? (
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >

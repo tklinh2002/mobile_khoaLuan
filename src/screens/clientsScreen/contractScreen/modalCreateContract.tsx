@@ -10,7 +10,6 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
-import Job from "./job";
 import { useEffect, useState } from "react";
 import IconAntDesign from "react-native-vector-icons/AntDesign";
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,17 +20,8 @@ import { useAccount, useContractWrite } from "wagmi";
 import { W3mButton, Web3Modal } from "@web3modal/wagmi-react-native";
 import { INotiParams } from "../../../apis/type.task.api";
 import { useNotification, useOTP } from "../../../hook/hook";
-import ModalLoading from "../../component/modalLoading";
-import { ethers } from "ethers";
 import ModalPolicy from "../../component/modalPolici";
-// cadidate:{
-
-//   freelancer_id: number;
-//   job_id: number;
-//   username: string;
-//   email: string;
-
-// }
+import ModalDetailJobContract from "../../component/modalDetailJobContract";
 const ModalCreateContract = ({ setmodalvisiable, candidate }) => {
   const queryClient = useQueryClient();
   const infoLogin = queryClient.getQueryData(["infoLogin"]) as any;
@@ -40,55 +30,28 @@ const ModalCreateContract = ({ setmodalvisiable, candidate }) => {
   const [checked, setChecked] = useState(false);
   const { isConnected } = useAccount();
   const { sendNotication } = useNotification();
-  const TIME_OUT = 300; //second
-  const [modalOtp, setModalOtp] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [countdown, setCountdown] = useState(TIME_OUT); // 5 minutes in seconds
-  const [isTimerRunning, setIsTimerRunning] = useState(true);
-  const { sendOtp, verifyOtp } = useOTP();
-  const [modalPolicy, setModalPolicy] = useState(false);
-  useEffect(() => {
-    let interval;
-    if (isTimerRunning) {
-      interval = setInterval(() => {
-        setCountdown((countdown) => {
-          if (countdown > 0) {
-            return countdown - 1;
-          } else {
-            setIsTimerRunning(false);
-            return 0;
-          }
-        });
-      }, 1000);
-    }
+  const [modalDetailJob, setModalDetailJob] = useState(false);
 
-    return () => clearInterval(interval);
-  }, [isTimerRunning]);
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-  };
+  const [modalPolicy, setModalPolicy] = useState(false);
 
   const job = queryClient.getQueryData([
     "job",
     Number(candidate?.job_id),
   ] as any) as any;
   const createContract = useContractWrite({
-    address: "0x70a0327000D117490FC5bD3edE0318d17F8e930e",
+    address: "0x9a48613E8053D7B7A473AE835A7cC4E09bC705E4",
     abi,
     functionName: "createContract",
     args: [
       job?.title,
       job?.desc,
       signature,
-      // ethers.utils.formatEther(ethers.BigNumber.from(10000)),
-      // 1000000,
-      0,
+      Number(job?.bids),
       job?.id,
       candidate?.freelancer_id,
       job?.client_id,
     ],
+    value: Number(job?.bids),
     onError: (error) => {
       if (error.message.includes("User rejected the transaction")) {
         console.log("User rejected contract creation.");
@@ -98,6 +61,14 @@ const ModalCreateContract = ({ setmodalvisiable, candidate }) => {
     },
   } as any);
   const handleCreateContract = async () => {
+    if (signature == "") {
+      Alert.alert("Error", "Vui lòng ký tên");
+      return;
+    }
+    if (!isConnected) {
+      Alert.alert("Error", "Vui lòng kết nối ví");
+      return;
+    }
     createContract
       .writeAsync()
       .then(() => {
@@ -126,51 +97,6 @@ const ModalCreateContract = ({ setmodalvisiable, candidate }) => {
       });
   };
 
-  const resendOTP = () => {
-    sendOtp
-      .mutateAsync()
-      .then((res) => {
-        setCountdown(TIME_OUT);
-        setIsTimerRunning(true);
-      })
-      .catch((err) => {
-        Alert.alert("Gửi mã OTP thất bại");
-      });
-  };
-  const handleSendOtp = async () => {
-    if (!isConnected) {
-      alert("Kết nối ví trước khi tạo hợp đồng");
-      return;
-    }
-    if (signature == "") {
-      alert("Vui lòng ký tên trước khi tạo hợp đồng");
-      return;
-    }
-    const res = await sendOtp
-      .mutateAsync()
-      .then((res) => {
-        console.log("send otp success");
-        setModalOtp(true);
-        setCountdown(TIME_OUT);
-        setIsTimerRunning(true);
-      })
-      .catch((err) => {
-        Alert.alert("Gửi mã OTP thất bại");
-        console.log(err);
-      });
-  };
-  const handleVerifyOtp = async () => {
-    verifyOtp
-      .mutateAsync(otp)
-      .then((res) => {
-        handleCreateContract();
-        setModalOtp(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        Alert.alert("Xác nhận OTP thất bại");
-      });
-  };
   return (
     <ScrollView>
       <TouchableNativeFeedback
@@ -218,9 +144,22 @@ const ModalCreateContract = ({ setmodalvisiable, candidate }) => {
               Số điện thoại: {infoLogin?.user?.phone_num}
             </Text>
           </View>
-          {/* detail job */}
-          <Job job={job} />
-          {/* Ký tên */}
+          <View style={styles.info}>
+            <Text style={{ fontSize: 20 }}>Chi tiết công việc</Text>
+            <Text style={styles.textInfo}>{job?.title}</Text>
+            <Text style={styles.textInfo}>Ngân sách: {job?.bids}</Text>
+            <TouchableOpacity onPress={() => setModalDetailJob(true)}>
+              <Text
+                style={{
+                  fontStyle: "italic",
+                  color: "blue",
+                  textAlign: "center",
+                }}
+              >
+                Xem thêm ........
+              </Text>
+            </TouchableOpacity>
+          </View>
           {/* Điều khoản hợp đồng */}
 
           <View style={[styles.info, { flexDirection: "row" }]}>
@@ -310,78 +249,12 @@ const ModalCreateContract = ({ setmodalvisiable, candidate }) => {
               />
             </View>
           </Modal>
-
-          {/* modal otp */}
-          <Modal visible={modalOtp} transparent={true}>
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={{ margin: 5, fontSize: 15 }}>
-                  Vui lòng nhập mã OTP ở mail để xác nhận chữ ký
-                </Text>
-                <TextInput
-                  mode="outlined"
-                  keyboardType="number-pad"
-                  maxLength={6}
-                  label={"Nhập OTP"}
-                  style={{ width: 200, textAlign: "center", margin: 10 }}
-                  onChangeText={setOtp}
-                />
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-around",
-                    width: 200,
-                    marginBottom: 20,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      color: isTimerRunning ? "black" : "red",
-                    }}
-                  >
-                    {formatTime(countdown)}
-                  </Text>
-                  <TouchableOpacity onPress={resendOTP}>
-                    <Text
-                      style={{
-                        fontSize: 15,
-                        fontWeight: "600",
-                        color: "blue",
-                        fontStyle: "italic",
-                      }}
-                    >
-                      Gửi lại
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-around",
-                  }}
-                >
-                  <Button
-                    style={{ backgroundColor: "green", marginRight: 10 }}
-                    mode="contained"
-                    onPress={handleVerifyOtp}
-                  >
-                    Xác nhận otp
-                  </Button>
-                  <Button
-                    style={{ backgroundColor: "red", marginRight: 10 }}
-                    mode="contained"
-                    onPress={() => setModalOtp(false)}
-                  >
-                    Hủy
-                  </Button>
-                </View>
-                <ModalLoading visible={verifyOtp.isPending} />
-              </View>
-            </View>
+          <Modal visible={modalDetailJob} animationType="slide" transparent={true}>
+            <ModalDetailJobContract
+              jobId={job?.id}
+              setModalVisible={setModalDetailJob}
+            />
           </Modal>
-          {/* modal loading */}
-          <ModalLoading visible={sendOtp.isPending} />
         </View>
       </TouchableNativeFeedback>
     </ScrollView>
@@ -452,18 +325,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginHorizontal: 10,
     marginVertical: 10,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
   },
 });
 export default ModalCreateContract;
